@@ -26,7 +26,7 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           primarySwatch: Colors.deepPurple,
         ),
-        home: const MyHomePage(title: 'Test API ver.1.0'),
+        home: const MyHomePage(title: 'Test API ver.1.0.3'),
         debugShowCheckedModeBanner: false,
       ),
     );
