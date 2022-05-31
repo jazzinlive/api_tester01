@@ -35,19 +35,10 @@ class _GetPaymentTokenState extends State<GetPaymentToken> {
   String? endpointURL = "https://sandbox-pgw.2c2p.com/payment/4.1/paymentToken";
 
   String requestMsg =
-      '{"merchantID": "JT04","invoiceNo": "20220424","description": "Test item","amount": 2000.00,"currencyCode": "THB"}';
+      '{"merchantID": "JT04","invoiceNo": "20220424","description": "Test item","amount": 2000.00,"currencyCode": "THB","backendReturnUrl": "https://3861159a-13a9-46f3-977f-78d2cd932679.mock.pstmn.io"}';
 
-  dynamic requestMsgJson = {
-    "merchantID": "JT04",
-    "invoiceNo": "20220424",
-    "description": "Test item",
-    "amount": 2000.00,
-    "currencyCode": "THB"
-  };
-
-  MsgRequest msgRequest =
-      MsgRequest('JT04', '2022042400005', 'item 1', 'THB', 12000);
-
+  String respBackToken =
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjYXJkTm8iOiI0MTExMTFYWFhYWFgxMTExIiwiY2FyZFRva2VuIjoiIiwibG95YWx0eVBvaW50cyI6bnVsbCwibWVyY2hhbnRJRCI6IjAxNDAxMDAwMDAwMDAwMyIsImludm9pY2VObyI6IjIwMjIwNDI0MDAwMDUxIiwiYW1vdW50IjoxMDAwLjAsIm1vbnRobHlQYXltZW50IjpudWxsLCJ1c2VyRGVmaW5lZDEiOiIiLCJ1c2VyRGVmaW5lZDIiOiIiLCJ1c2VyRGVmaW5lZDMiOiIiLCJ1c2VyRGVmaW5lZDQiOiIiLCJ1c2VyRGVmaW5lZDUiOiIiLCJjdXJyZW5jeUNvZGUiOiJUSEIiLCJyZWN1cnJpbmdVbmlxdWVJRCI6IiIsInRyYW5SZWYiOiI0ODczMjg0IiwicmVmZXJlbmNlTm8iOiI0NTEzMDI5IiwiYXBwcm92YWxDb2RlIjoiNjgzNTYzIiwiZWNpIjoiMDUiLCJ0cmFuc2FjdGlvbkRhdGVUaW1lIjoiMjAyMjA1MDMxNTQ1MTgiLCJhZ2VudENvZGUiOiJUQkFOSyIsImNoYW5uZWxDb2RlIjoiVkkiLCJpc3N1ZXJDb3VudHJ5IjoiVVMiLCJpc3N1ZXJCYW5rIjoiQkFOSyIsImluc3RhbGxtZW50TWVyY2hhbnRBYnNvcmJSYXRlIjpudWxsLCJjYXJkVHlwZSI6IkNSRURJVCIsImlkZW1wb3RlbmN5SUQiOiIiLCJwYXltZW50U2NoZW1lIjoiVkkiLCJyZXNwQ29kZSI6IjAwMDAiLCJyZXNwRGVzYyI6IlN1Y2Nlc3MifQ.g61cW9XFyzOuO3bV47g7Y2vUoyfQp6qMib6mpjR4oZI";
   String? tokenValue;
   String secretKey =
       "CD229682D3297390B9F66FF4020B758F4A5E625AF4992E5D75D311D6458B38E2";
@@ -64,18 +55,17 @@ class _GetPaymentTokenState extends State<GetPaymentToken> {
         jsonDecode(context.read<JWTModels>().requestMsg);
     print(newObj);
 
-    msgRequest = MsgRequest(newObj['merchantID'], newObj['invoiceNo'],
-        newObj['description'], newObj['currencyCode'], newObj['amount']);
+    // msgRequest = MsgRequest(newObj['merchantID'], newObj['invoiceNo'],
+    //     newObj['description'], newObj['currencyCode'], newObj['amount']);
     final jwt = JWT(
       newObj,
-      //msgRequest.toJson(),
       issuer: 'https://github.com/jonasroussel/dart_jsonwebtoken',
     );
 
     final token = jwt.sign(SecretKey(context.read<JWTModels>().secretKey));
     //print(requestMsgJson);
     print(context.read<JWTModels>().secretKey);
-    print(msgRequest.toJson());
+    //print(msgRequest.toJson());
     print(jwt.payload);
     print('Signed token: $token\n');
     context.read<JWTModels>().encodedToken = token;
@@ -104,6 +94,7 @@ class _GetPaymentTokenState extends State<GetPaymentToken> {
 
         print('Status Code: ${response.statusCode}');
         print('Response Body: ${responseBody}');
+        print('Response Token: $responseBody');
 
         if (responseBody == null) {
           print(responseJson['respDesc']);
@@ -111,19 +102,18 @@ class _GetPaymentTokenState extends State<GetPaymentToken> {
             context.read<JWTModels>().respCode = responseJson['respCode'];
             context.read<JWTModels>().respDesc = responseJson['respDesc'];
           });
-          // context.read<JWTModels>().respCode = responseJson['respCode'];
-          // context.read<JWTModels>().respDesc = responseJson['respDesc'];
-          final snackBar = SnackBar(
-            content: Text(responseJson['respDesc']),
-            duration: const Duration(seconds: 10),
-            action: SnackBarAction(
-              label: 'Close',
-              onPressed: () {
-                // Some code to undo the change.
-                Navigator.pop(context);
-              },
-            ),
-          );
+          
+          // final snackBar = SnackBar(
+          //   content: Text(responseJson['respDesc']),
+          //   duration: const Duration(seconds: 10),
+          //   action: SnackBarAction(
+          //     label: 'Close',
+          //     onPressed: () {
+          //       // Some code to undo the change.
+          //       Navigator.pop(context);
+          //     },
+          //   ),
+          // );
           // ignore: deprecated_member_use
           //_scaffoldKey.currentState!.showSnackBar(snackBar);
           return "";
@@ -160,8 +150,6 @@ class _GetPaymentTokenState extends State<GetPaymentToken> {
               return webPaymentUrl;
             }
           });
-        } on JWTExpiredError {
-          print('jwt expired');
         } on JWTError catch (ex) {
           print(ex.message); // ex: invalid signature
         }
@@ -186,6 +174,23 @@ class _GetPaymentTokenState extends State<GetPaymentToken> {
     }
 
     return "1";
+  }
+
+  void responseBackend() async {
+    try {
+      // JWT Decode
+      final respToken = await context.read<JWTModels>().response;
+      final jwt2 =
+          JWT.verify(respToken, SecretKey(context.read<JWTModels>().secretKey));
+
+      print('Response Backend Payload: ${jwt2.payload}');
+
+      setState(() {
+        context.read<JWTModels>().decodedPayload = jwt2.payload.toString();
+      });
+    } on JWTError catch (ex) {
+      print(ex.message); // ex: invalid signature
+    }
   }
 
   var jwts = JWTServices();
@@ -253,7 +258,7 @@ class _GetPaymentTokenState extends State<GetPaymentToken> {
                       const SizedBox(height: 5),
                       TextFormField(
                         keyboardType: TextInputType.multiline,
-                        maxLines: 5,
+                        maxLines: 6,
                         initialValue: requestMsg,
                         decoration: const InputDecoration(
                           border: InputBorder.none,
@@ -312,7 +317,8 @@ class _GetPaymentTokenState extends State<GetPaymentToken> {
                               )
                             : Text(
                                 context.read<JWTModels>().encodedToken ?? "",
-                                style: const TextStyle(color: Colors.yellow),
+                                style: const TextStyle(
+                                    color: Colors.yellow, fontSize: 10),
                               ),
                       ),
                       const SizedBox(height: 5),
@@ -335,7 +341,8 @@ class _GetPaymentTokenState extends State<GetPaymentToken> {
                               )
                             : Text(
                                 '{  \n"payload": "${context.read<JWTModels>().encodedToken}"\n}',
-                                style: const TextStyle(color: Colors.yellow),
+                                style: const TextStyle(
+                                    color: Colors.yellow, fontSize: 10),
                               ),
                       ),
                       const SizedBox(height: 10),
@@ -409,9 +416,6 @@ class _GetPaymentTokenState extends State<GetPaymentToken> {
                                 ? '{  \n"payload": "<Response token from POST request>"\n}'
                                 : context.read<JWTModels>().respDesc ==
                                         "Success"
-                                    //     &&
-                                    // context.read<JWTModels>().respCode ==
-                                    //     0000
                                     ? '{  \n"payload": "${context.read<JWTModels>().decodedToken}"\n}'
                                     : '{  \n"respCode": "${context.read<JWTModels>().respCode}"\n"respDesc": "${context.read<JWTModels>().respDesc}"\n}',
                             style: const TextStyle(color: Colors.yellow),
@@ -501,6 +505,78 @@ class _GetPaymentTokenState extends State<GetPaymentToken> {
                                   "Please recheck your request message to get valid payment link button.",
                                   style: TextStyle(color: Colors.red),
                                 )),
+                      const SizedBox(height: 10),
+                      const Divider(
+                        thickness: 1,
+                      ),
+                      const Text(
+                        "After payment successful",
+                        style: TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.bold),
+                      ),
+                      const Divider(
+                        thickness: 1,
+                      ),
+                      const SizedBox(height: 10),
+                      const Text(
+                        "Backend Response Token",
+                        style: TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.bold),
+                      ),
+                      const SizedBox(height: 5),
+                      TextFormField(
+                        keyboardType: TextInputType.multiline,
+                        maxLines: 10,
+                        initialValue: respBackToken,
+                        decoration: const InputDecoration(
+                          border: InputBorder.none,
+                          filled: true,
+                          fillColor: Color.fromARGB(255, 244, 245, 198),
+                          hintText:
+                              "Input response token you get from your server",
+                        ),
+                        style: TextStyle(color: Colors.red[900], fontSize: 10),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please input response token.';
+                          }
+                          return null;
+                        },
+                        onChanged: (value) {
+                          setState(() {
+                            context.read<JWTModels>().response = value;
+                          });
+                        },
+                        onSaved: (value) {
+                          context.read<JWTModels>().response = value;
+                        },
+                      ),
+                      const SizedBox(height: 5),
+                      SizedBox(
+                        width: double.infinity,
+                        height: 35,
+                        child: ElevatedButton(
+                            onPressed: () async {
+                              if (_formKey.currentState!.validate()) {
+                                _formKey.currentState!.save();
+                                responseBackend();
+                              }
+                            },
+                            child: const Text(
+                              "Decode Response Backend Notification",
+                            )),
+                      ),
+                      const SizedBox(height: 10),
+                      Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                            color: Colors.grey[900],
+                          ),
+                          child: Text(
+                            context.read<JWTModels>().decodedPayload.toString(),
+                            style: const TextStyle(color: Colors.cyanAccent),
+                          )),
                       const SizedBox(height: 10),
                     ]),
               )),

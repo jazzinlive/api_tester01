@@ -11,14 +11,14 @@ import 'dart:convert' as convert;
 
 import 'package:provider/provider.dart';
 
-class GetPaymentTokenDemo02 extends StatefulWidget {
-  const GetPaymentTokenDemo02({Key? key}) : super(key: key);
+class FormTokenDemo01 extends StatefulWidget {
+  const FormTokenDemo01({Key? key}) : super(key: key);
 
   @override
-  State<GetPaymentTokenDemo02> createState() => _GetPaymentTokenDemo02State();
+  State<FormTokenDemo01> createState() => _FormTokenDemo01State();
 }
 
-class _GetPaymentTokenDemo02State extends State<GetPaymentTokenDemo02> {
+class _FormTokenDemo01State extends State<FormTokenDemo01> {
   final _formKey = GlobalKey<FormState>();
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   String pasteValue = '';
@@ -34,14 +34,21 @@ class _GetPaymentTokenDemo02State extends State<GetPaymentTokenDemo02> {
   ];
   String? endpointURL = "https://sandbox-pgw.2c2p.com/payment/4.1/paymentToken";
 
-  String requestMsg =
-      '{"merchantID": "014020000000003","invoiceNo": "20220424","description": "Test item","amount": 2000.00,"currencyCode": "THB","backendReturnUrl": "https://3861159a-13a9-46f3-977f-78d2cd932679.mock.pstmn.io"}';
+  String mid = "014010000000003";
+  String invNo = "2022042400005";
+  String description = "item demo1";
+  double amount = 100.00;
+  String currencyCode = "THB";
+  String backendReturnURL =
+      "https://3861159a-13a9-46f3-977f-78d2cd932679.mock.pstmn.io";
 
   String respBackToken =
       "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjYXJkTm8iOiI0MTExMTFYWFhYWFgxMTExIiwiY2FyZFRva2VuIjoiIiwibG95YWx0eVBvaW50cyI6bnVsbCwibWVyY2hhbnRJRCI6IjAxNDAxMDAwMDAwMDAwMyIsImludm9pY2VObyI6IjIwMjIwNDI0MDAwMDUxIiwiYW1vdW50IjoxMDAwLjAsIm1vbnRobHlQYXltZW50IjpudWxsLCJ1c2VyRGVmaW5lZDEiOiIiLCJ1c2VyRGVmaW5lZDIiOiIiLCJ1c2VyRGVmaW5lZDMiOiIiLCJ1c2VyRGVmaW5lZDQiOiIiLCJ1c2VyRGVmaW5lZDUiOiIiLCJjdXJyZW5jeUNvZGUiOiJUSEIiLCJyZWN1cnJpbmdVbmlxdWVJRCI6IiIsInRyYW5SZWYiOiI0ODczMjg0IiwicmVmZXJlbmNlTm8iOiI0NTEzMDI5IiwiYXBwcm92YWxDb2RlIjoiNjgzNTYzIiwiZWNpIjoiMDUiLCJ0cmFuc2FjdGlvbkRhdGVUaW1lIjoiMjAyMjA1MDMxNTQ1MTgiLCJhZ2VudENvZGUiOiJUQkFOSyIsImNoYW5uZWxDb2RlIjoiVkkiLCJpc3N1ZXJDb3VudHJ5IjoiVVMiLCJpc3N1ZXJCYW5rIjoiQkFOSyIsImluc3RhbGxtZW50TWVyY2hhbnRBYnNvcmJSYXRlIjpudWxsLCJjYXJkVHlwZSI6IkNSRURJVCIsImlkZW1wb3RlbmN5SUQiOiIiLCJwYXltZW50U2NoZW1lIjoiVkkiLCJyZXNwQ29kZSI6IjAwMDAiLCJyZXNwRGVzYyI6IlN1Y2Nlc3MifQ.g61cW9XFyzOuO3bV47g7Y2vUoyfQp6qMib6mpjR4oZI";
   String? tokenValue;
   String secretKey =
-      "0620F68599570F461F83571F4625E9F42A90C3027BDAC67842837A670B6B2FB7";
+      "7E097B0BEC9E21F61388FF80500A8E0EA926875C55A2C33497636FB1242A06A5";
+  String requestMsg =
+      '{"merchantID": "014010000000003","invoiceNo": "2022042400005","description": "item demo1","amount": 1000.00,"currencyCode": "THB","backendReturnUrl": "https://3861159a-13a9-46f3-977f-78d2cd932679.mock.pstmn.io"}';
 
   void getDropDownItem() {
     setState(() {
@@ -53,17 +60,21 @@ class _GetPaymentTokenDemo02State extends State<GetPaymentTokenDemo02> {
     // step 1
     Map<String, dynamic> newObj =
         jsonDecode(context.read<JWTModels>().requestMsg);
-    print(newObj);
 
-    // msgRequest = MsgRequest(newObj['merchantID'], newObj['invoiceNo'],
-    //     newObj['description'], newObj['currencyCode'], newObj['amount']);
+    print("newObj: $newObj");
+    print("newObj mid: ${newObj['merchantID']}");
+    print("newObj invNo: ${newObj['invoiceNo']}");
+    print("newObj description: ${newObj['description']}");
+    print("newObj amount: ${newObj['amount']}");
+    print("newObj currencyCode: ${newObj['currencyCode']}");
+
     final jwt = JWT(
       newObj,
       issuer: 'https://github.com/jonasroussel/dart_jsonwebtoken',
     );
 
     final token = jwt.sign(SecretKey(context.read<JWTModels>().secretKey));
-    
+
     print(context.read<JWTModels>().secretKey);
     //print(msgRequest.toJson());
     print(jwt.payload);
@@ -96,14 +107,13 @@ class _GetPaymentTokenDemo02State extends State<GetPaymentTokenDemo02> {
         print('Status Code: ${response.statusCode}');
         print('Response Token: $responseBody');
 
-
         if (responseBody == null) {
           print(responseJson['respDesc']);
           setState(() {
             context.read<JWTModels>().respCode = responseJson['respCode'];
             context.read<JWTModels>().respDesc = responseJson['respDesc'];
           });
-          
+
           // final snackBar = SnackBar(
           //   content: Text(responseJson['respDesc']),
           //   duration: const Duration(seconds: 10),
@@ -126,7 +136,7 @@ class _GetPaymentTokenDemo02State extends State<GetPaymentTokenDemo02> {
           final jwt = JWT.verify(
               responseBody, SecretKey(context.read<JWTModels>().secretKey));
 
-          print('Response Body: ${jwt.payload}');
+          print('Response Payload: ${jwt.payload}');
 
           setState(() {
             context.read<JWTModels>().decodedPayload = jwt.payload.toString();
@@ -257,6 +267,44 @@ class _GetPaymentTokenDemo02State extends State<GetPaymentTokenDemo02> {
                             fontSize: 18, fontWeight: FontWeight.bold),
                       ),
                       const SizedBox(height: 5),
+                      Row(
+                        children: [
+                          const Expanded(flex: 1, child: Text('Merchant ID:')),
+                          Expanded(
+                            flex: 3,
+                            child: SizedBox(
+                              height: 40,
+                              child: TextFormField(
+                                keyboardType: TextInputType.multiline,
+                                initialValue: mid,
+                                decoration: const InputDecoration(
+                                  border: InputBorder.none,
+                                  filled: true,
+                                  fillColor: Color.fromARGB(255, 244, 245, 198),
+                                  hintText: "Input message request",
+                                ),
+                                style: TextStyle(color: Colors.red[900]),
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Please input request message payload.';
+                                  }
+                                  return null;
+                                },
+                                onChanged: (value) {
+                                  setState(() {
+                                    context.read<JWTModels>().requestMsg =
+                                        value;
+                                  });
+                                },
+                                onSaved: (value) {
+                                  context.read<JWTModels>().requestMsg = value;
+                                },
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 5),
                       TextFormField(
                         keyboardType: TextInputType.multiline,
                         maxLines: 6,
@@ -318,7 +366,8 @@ class _GetPaymentTokenDemo02State extends State<GetPaymentTokenDemo02> {
                               )
                             : Text(
                                 context.read<JWTModels>().encodedToken ?? "",
-                                style: const TextStyle(color: Colors.yellow),
+                                style: const TextStyle(
+                                    color: Colors.yellow, fontSize: 10),
                               ),
                       ),
                       const SizedBox(height: 5),
@@ -341,7 +390,8 @@ class _GetPaymentTokenDemo02State extends State<GetPaymentTokenDemo02> {
                               )
                             : Text(
                                 '{  \n"payload": "${context.read<JWTModels>().encodedToken}"\n}',
-                                style: const TextStyle(color: Colors.yellow),
+                                style: const TextStyle(
+                                    color: Colors.yellow, fontSize: 10),
                               ),
                       ),
                       const SizedBox(height: 10),
