@@ -6,6 +6,7 @@ import 'package:apitest01/services/jwt_services.dart';
 import 'package:flutter/material.dart';
 import 'package:dart_jsonwebtoken/dart_jsonwebtoken.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 import 'dart:async';
 import 'dart:convert' as convert;
 
@@ -33,15 +34,17 @@ class _GetPaymentTokenDemo01State extends State<GetPaymentTokenDemo01> {
     'Production',
   ];
   String? endpointURL = "https://sandbox-pgw.2c2p.com/payment/4.1/paymentToken";
-
-  String requestMsg =
-      '{"merchantID": "014010000000003","invoiceNo": "2022042400005","description": "item demo1","amount": 1000.00,"currencyCode": "THB","backendReturnUrl": "https://3861159a-13a9-46f3-977f-78d2cd932679.mock.pstmn.io"}';
+  String secretKey =
+      "7E097B0BEC9E21F61388FF80500A8E0EA926875C55A2C33497636FB1242A06A5";
+  DateTime now = DateTime.now();
+  late String invNo = DateFormat("yyyyMMddhhmmss").format(now);
+  late String requestMsg =
+      '{\n"merchantID": "014010000000003",\n"invoiceNo": "$invNo",\n"description": "Test item demo01",\n"amount": 100.00,\n"currencyCode": "THB",\n"frontendReturnUrl": "https://www.2c2p.com",\n"backendReturnUrl": "https://3861159a-13a9-46f3-977f-78d2cd932679.mock.pstmn.io"\n}';
 
   String respBackToken =
       "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjYXJkTm8iOiI0MTExMTFYWFhYWFgxMTExIiwiY2FyZFRva2VuIjoiIiwibG95YWx0eVBvaW50cyI6bnVsbCwibWVyY2hhbnRJRCI6IjAxNDAxMDAwMDAwMDAwMyIsImludm9pY2VObyI6IjIwMjIwNDI0MDAwMDUxIiwiYW1vdW50IjoxMDAwLjAsIm1vbnRobHlQYXltZW50IjpudWxsLCJ1c2VyRGVmaW5lZDEiOiIiLCJ1c2VyRGVmaW5lZDIiOiIiLCJ1c2VyRGVmaW5lZDMiOiIiLCJ1c2VyRGVmaW5lZDQiOiIiLCJ1c2VyRGVmaW5lZDUiOiIiLCJjdXJyZW5jeUNvZGUiOiJUSEIiLCJyZWN1cnJpbmdVbmlxdWVJRCI6IiIsInRyYW5SZWYiOiI0ODczMjg0IiwicmVmZXJlbmNlTm8iOiI0NTEzMDI5IiwiYXBwcm92YWxDb2RlIjoiNjgzNTYzIiwiZWNpIjoiMDUiLCJ0cmFuc2FjdGlvbkRhdGVUaW1lIjoiMjAyMjA1MDMxNTQ1MTgiLCJhZ2VudENvZGUiOiJUQkFOSyIsImNoYW5uZWxDb2RlIjoiVkkiLCJpc3N1ZXJDb3VudHJ5IjoiVVMiLCJpc3N1ZXJCYW5rIjoiQkFOSyIsImluc3RhbGxtZW50TWVyY2hhbnRBYnNvcmJSYXRlIjpudWxsLCJjYXJkVHlwZSI6IkNSRURJVCIsImlkZW1wb3RlbmN5SUQiOiIiLCJwYXltZW50U2NoZW1lIjoiVkkiLCJyZXNwQ29kZSI6IjAwMDAiLCJyZXNwRGVzYyI6IlN1Y2Nlc3MifQ.g61cW9XFyzOuO3bV47g7Y2vUoyfQp6qMib6mpjR4oZI";
   String? tokenValue;
-  String secretKey =
-      "7E097B0BEC9E21F61388FF80500A8E0EA926875C55A2C33497636FB1242A06A5";
+  
 
   void getDropDownItem() {
     setState(() {
@@ -198,6 +201,7 @@ class _GetPaymentTokenDemo01State extends State<GetPaymentTokenDemo01> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        backgroundColor: Colors.transparent,
         key: _scaffoldKey,
         body: SingleChildScrollView(
           physics: const BouncingScrollPhysics(),
@@ -227,10 +231,11 @@ class _GetPaymentTokenDemo01State extends State<GetPaymentTokenDemo01> {
                         decoration: const InputDecoration(
                           border: InputBorder.none,
                           filled: true,
-                          fillColor: Color.fromARGB(255, 244, 245, 198),
+                          fillColor: Color.fromARGB(255, 36, 35, 35),
                           hintText: "Input secret key",
                         ),
-                        style: TextStyle(color: Colors.red[900]),
+                        style:
+                            const TextStyle(color: Colors.white, fontSize: 13),
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return 'Please input secret key.';
@@ -258,15 +263,16 @@ class _GetPaymentTokenDemo01State extends State<GetPaymentTokenDemo01> {
                       const SizedBox(height: 5),
                       TextFormField(
                         keyboardType: TextInputType.multiline,
-                        maxLines: 6,
+                        maxLines: 12,
                         initialValue: requestMsg,
                         decoration: const InputDecoration(
                           border: InputBorder.none,
                           filled: true,
-                          fillColor: Color.fromARGB(255, 244, 245, 198),
+                          fillColor: Color.fromARGB(255, 36, 35, 35),
                           hintText: "Input message request",
                         ),
-                        style: TextStyle(color: Colors.red[900]),
+                        style:
+                            const TextStyle(color: Colors.white, fontSize: 13),
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return 'Please input request message payload.';
@@ -418,8 +424,10 @@ class _GetPaymentTokenDemo01State extends State<GetPaymentTokenDemo01> {
                                         "Success"
                                     ? '{  \n"payload": "${context.read<JWTModels>().decodedToken}"\n}'
                                     : '{  \n"respCode": "${context.read<JWTModels>().respCode}"\n"respDesc": "${context.read<JWTModels>().respDesc}"\n}',
-                            style: const TextStyle(color: Colors.yellow),
+                            style: const TextStyle(
+                                color: Colors.yellow, fontSize: 10),
                           )),
+                      const SizedBox(height: 5),
                       const Text(
                         "Decoded",
                         style: TextStyle(

@@ -30,12 +30,28 @@ class _RedirectPaymentPageState extends State<RedirectPaymentPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Payment Page'),
+        title: const Text('2c2p Payment Page'),
+        centerTitle: true,
+        backgroundColor: Colors.transparent,
+        elevation: 1,
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+                begin: Alignment.centerLeft,
+                end: Alignment.centerRight,
+                colors: [
+                  Colors.teal.withOpacity(0.8),
+                  //Colors.white.withOpacity(0.7),
+                  Colors.purple[900]!.withOpacity(0.8),
+                ]),
+          ),
+        ),
         actions: [
           NavigationControls(controller: controller),
           Menu(controller: controller)
         ],
       ),
+      
       body: WebViewStack(controller: controller),
     );
   }

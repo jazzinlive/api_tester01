@@ -8,7 +8,7 @@ import 'package:dart_jsonwebtoken/dart_jsonwebtoken.dart';
 import 'package:http/http.dart' as http;
 import 'dart:async';
 import 'dart:convert' as convert;
-
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 class GetPaymentToken extends StatefulWidget {
@@ -32,10 +32,13 @@ class _GetPaymentTokenState extends State<GetPaymentToken> {
     'DEMO',
     'Production',
   ];
+  DateTime now = DateTime.now();
+  late String dt = DateFormat("yyyyMMddhhmmss").format(now);
+
   String? endpointURL = "https://sandbox-pgw.2c2p.com/payment/4.1/paymentToken";
 
-  String requestMsg =
-      '{"merchantID": "JT04","invoiceNo": "20220424","description": "Test item","amount": 2000.00,"currencyCode": "THB","backendReturnUrl": "https://3861159a-13a9-46f3-977f-78d2cd932679.mock.pstmn.io"}';
+  late String requestMsg =
+      '{\n"merchantID": "JT04",\n"invoiceNo": "$dt",\n"description": "Test item",\n"amount": 2000.00,\n"currencyCode": "THB",\n"frontendReturnUrl": "https://www.scb.co.th",\n"backendReturnUrl": "https://3861159a-13a9-46f3-977f-78d2cd932679.mock.pstmn.io"\n}';
 
   String respBackToken =
       "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjYXJkTm8iOiI0MTExMTFYWFhYWFgxMTExIiwiY2FyZFRva2VuIjoiIiwibG95YWx0eVBvaW50cyI6bnVsbCwibWVyY2hhbnRJRCI6IjAxNDAxMDAwMDAwMDAwMyIsImludm9pY2VObyI6IjIwMjIwNDI0MDAwMDUxIiwiYW1vdW50IjoxMDAwLjAsIm1vbnRobHlQYXltZW50IjpudWxsLCJ1c2VyRGVmaW5lZDEiOiIiLCJ1c2VyRGVmaW5lZDIiOiIiLCJ1c2VyRGVmaW5lZDMiOiIiLCJ1c2VyRGVmaW5lZDQiOiIiLCJ1c2VyRGVmaW5lZDUiOiIiLCJjdXJyZW5jeUNvZGUiOiJUSEIiLCJyZWN1cnJpbmdVbmlxdWVJRCI6IiIsInRyYW5SZWYiOiI0ODczMjg0IiwicmVmZXJlbmNlTm8iOiI0NTEzMDI5IiwiYXBwcm92YWxDb2RlIjoiNjgzNTYzIiwiZWNpIjoiMDUiLCJ0cmFuc2FjdGlvbkRhdGVUaW1lIjoiMjAyMjA1MDMxNTQ1MTgiLCJhZ2VudENvZGUiOiJUQkFOSyIsImNoYW5uZWxDb2RlIjoiVkkiLCJpc3N1ZXJDb3VudHJ5IjoiVVMiLCJpc3N1ZXJCYW5rIjoiQkFOSyIsImluc3RhbGxtZW50TWVyY2hhbnRBYnNvcmJSYXRlIjpudWxsLCJjYXJkVHlwZSI6IkNSRURJVCIsImlkZW1wb3RlbmN5SUQiOiIiLCJwYXltZW50U2NoZW1lIjoiVkkiLCJyZXNwQ29kZSI6IjAwMDAiLCJyZXNwRGVzYyI6IlN1Y2Nlc3MifQ.g61cW9XFyzOuO3bV47g7Y2vUoyfQp6qMib6mpjR4oZI";
@@ -102,7 +105,7 @@ class _GetPaymentTokenState extends State<GetPaymentToken> {
             context.read<JWTModels>().respCode = responseJson['respCode'];
             context.read<JWTModels>().respDesc = responseJson['respDesc'];
           });
-          
+
           // final snackBar = SnackBar(
           //   content: Text(responseJson['respDesc']),
           //   duration: const Duration(seconds: 10),
@@ -198,6 +201,7 @@ class _GetPaymentTokenState extends State<GetPaymentToken> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        backgroundColor: Colors.transparent,
         key: _scaffoldKey,
         body: SingleChildScrollView(
           physics: const BouncingScrollPhysics(),
@@ -227,10 +231,11 @@ class _GetPaymentTokenState extends State<GetPaymentToken> {
                         decoration: const InputDecoration(
                           border: InputBorder.none,
                           filled: true,
-                          fillColor: Color.fromARGB(255, 244, 245, 198),
+                          fillColor: Color.fromARGB(255, 36, 35, 35),
                           hintText: "Input secret key",
                         ),
-                        style: TextStyle(color: Colors.red[900]),
+                        style:
+                            const TextStyle(color: Colors.white, fontSize: 13),
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return 'Please input secret key.';
@@ -258,15 +263,16 @@ class _GetPaymentTokenState extends State<GetPaymentToken> {
                       const SizedBox(height: 5),
                       TextFormField(
                         keyboardType: TextInputType.multiline,
-                        maxLines: 6,
+                        maxLines: 12,
                         initialValue: requestMsg,
                         decoration: const InputDecoration(
                           border: InputBorder.none,
                           filled: true,
-                          fillColor: Color.fromARGB(255, 244, 245, 198),
+                          fillColor: Color.fromARGB(255, 36, 35, 35),
                           hintText: "Input message request",
                         ),
-                        style: TextStyle(color: Colors.red[900]),
+                        style:
+                            const TextStyle(color: Colors.white, fontSize: 13),
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return 'Please input request message payload.';

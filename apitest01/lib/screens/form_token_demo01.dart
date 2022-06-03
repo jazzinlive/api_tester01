@@ -6,6 +6,7 @@ import 'package:apitest01/services/jwt_services.dart';
 import 'package:flutter/material.dart';
 import 'package:dart_jsonwebtoken/dart_jsonwebtoken.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 import 'dart:async';
 import 'dart:convert' as convert;
 
@@ -33,22 +34,24 @@ class _FormTokenDemo01State extends State<FormTokenDemo01> {
     'Production',
   ];
   String? endpointURL = "https://sandbox-pgw.2c2p.com/payment/4.1/paymentToken";
-
+  String secretKey =
+      "7E097B0BEC9E21F61388FF80500A8E0EA926875C55A2C33497636FB1242A06A5";
   String mid = "014010000000003";
-  String invNo = "2022042400005";
+  DateTime now = DateTime.now();
+  late String invNo = DateFormat("yyyyMMddhhmmss").format(now);
   String description = "item demo1";
   double amount = 100.00;
   String currencyCode = "THB";
+  String frontendReturnURL = "https://www.2c2p.com";
   String backendReturnURL =
       "https://3861159a-13a9-46f3-977f-78d2cd932679.mock.pstmn.io";
 
   String respBackToken =
       "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjYXJkTm8iOiI0MTExMTFYWFhYWFgxMTExIiwiY2FyZFRva2VuIjoiIiwibG95YWx0eVBvaW50cyI6bnVsbCwibWVyY2hhbnRJRCI6IjAxNDAxMDAwMDAwMDAwMyIsImludm9pY2VObyI6IjIwMjIwNDI0MDAwMDUxIiwiYW1vdW50IjoxMDAwLjAsIm1vbnRobHlQYXltZW50IjpudWxsLCJ1c2VyRGVmaW5lZDEiOiIiLCJ1c2VyRGVmaW5lZDIiOiIiLCJ1c2VyRGVmaW5lZDMiOiIiLCJ1c2VyRGVmaW5lZDQiOiIiLCJ1c2VyRGVmaW5lZDUiOiIiLCJjdXJyZW5jeUNvZGUiOiJUSEIiLCJyZWN1cnJpbmdVbmlxdWVJRCI6IiIsInRyYW5SZWYiOiI0ODczMjg0IiwicmVmZXJlbmNlTm8iOiI0NTEzMDI5IiwiYXBwcm92YWxDb2RlIjoiNjgzNTYzIiwiZWNpIjoiMDUiLCJ0cmFuc2FjdGlvbkRhdGVUaW1lIjoiMjAyMjA1MDMxNTQ1MTgiLCJhZ2VudENvZGUiOiJUQkFOSyIsImNoYW5uZWxDb2RlIjoiVkkiLCJpc3N1ZXJDb3VudHJ5IjoiVVMiLCJpc3N1ZXJCYW5rIjoiQkFOSyIsImluc3RhbGxtZW50TWVyY2hhbnRBYnNvcmJSYXRlIjpudWxsLCJjYXJkVHlwZSI6IkNSRURJVCIsImlkZW1wb3RlbmN5SUQiOiIiLCJwYXltZW50U2NoZW1lIjoiVkkiLCJyZXNwQ29kZSI6IjAwMDAiLCJyZXNwRGVzYyI6IlN1Y2Nlc3MifQ.g61cW9XFyzOuO3bV47g7Y2vUoyfQp6qMib6mpjR4oZI";
   String? tokenValue;
-  String secretKey =
-      "7E097B0BEC9E21F61388FF80500A8E0EA926875C55A2C33497636FB1242A06A5";
-  String requestMsg =
-      '{"merchantID": "014010000000003","invoiceNo": "2022042400005","description": "item demo1","amount": 1000.00,"currencyCode": "THB","backendReturnUrl": "https://3861159a-13a9-46f3-977f-78d2cd932679.mock.pstmn.io"}';
+  
+  late String? requestMsg =
+      '{\n"merchantID": "${context.read<JWTModels>().mid}",\n"invoiceNo": "${context.read<JWTModels>().invNo}",\n"description": "${context.read<JWTModels>().description}",\n"amount": ${context.read<JWTModels>().amount},\n"currencyCode": "$currencyCode",\n"frontendReturnUrl": "$frontendReturnURL",\n"backendReturnUrl": "$backendReturnURL"\n}';
 
   void getDropDownItem() {
     setState(() {
@@ -57,9 +60,9 @@ class _FormTokenDemo01State extends State<FormTokenDemo01> {
   }
 
   Future<String> encodePayloadJWT() async {
-    // step 1
-    Map<String, dynamic> newObj =
-        jsonDecode(context.read<JWTModels>().requestMsg);
+    print("Request Msg Update : $requestMsg");
+    // step 1 : convert string to json object
+    Map<String, dynamic> newObj = jsonDecode(requestMsg!);
 
     print("newObj: $newObj");
     print("newObj mid: ${newObj['merchantID']}");
@@ -68,6 +71,7 @@ class _FormTokenDemo01State extends State<FormTokenDemo01> {
     print("newObj amount: ${newObj['amount']}");
     print("newObj currencyCode: ${newObj['currencyCode']}");
 
+    // step 2 : encrypt to JWT
     final jwt = JWT(
       newObj,
       issuer: 'https://github.com/jonasroussel/dart_jsonwebtoken',
@@ -76,7 +80,6 @@ class _FormTokenDemo01State extends State<FormTokenDemo01> {
     final token = jwt.sign(SecretKey(context.read<JWTModels>().secretKey));
 
     print(context.read<JWTModels>().secretKey);
-    //print(msgRequest.toJson());
     print(jwt.payload);
     print('Signed token: $token\n');
     context.read<JWTModels>().encodedToken = token;
@@ -84,7 +87,92 @@ class _FormTokenDemo01State extends State<FormTokenDemo01> {
       tokenValue = context.read<JWTModels>().encodedToken;
     });
 
-    return token;
+    // step 3 : POST API
+    try {
+      final response = await http.post(
+        Uri.parse(endpointURL!),
+        headers: {'content-type': 'application/json'},
+        body: jsonEncode({
+          'payload': token,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        final responseJson = convert.jsonDecode(response.body);
+        final responseBodyToken = responseJson['payload'];
+
+        print('Status Code: ${response.statusCode}');
+        print('Response: ${response.body}');
+        print('Response: $responseJson');
+        print('Response Token: $responseBodyToken');
+
+        if (responseBodyToken == null) {
+          print(responseJson['respDesc']);
+          setState(() {
+            context.read<JWTModels>().respCode = responseJson['respCode'];
+            context.read<JWTModels>().respDesc = responseJson['respDesc'];
+          });
+          return "";
+        }
+        context.read<JWTModels>().decodedToken = responseBodyToken;
+
+        try {
+          // step 4 : decrypt JWT to json (get webPaymentURL)
+          final jwt = JWT.verify(responseBodyToken,
+              SecretKey(context.read<JWTModels>().secretKey));
+
+          print('Response Payload: ${jwt.payload}');
+
+          setState(() {
+            context.read<JWTModels>().decodedPayload = jwt.payload.toString();
+
+            final webPaymentUrl = jwt.payload['webPaymentUrl'];
+            context.read<JWTModels>().webPaymentURL =
+                jwt.payload['webPaymentUrl'].toString();
+
+            final paymentToken = jwt.payload['paymentToken'];
+            context.read<JWTModels>().paymentToken =
+                jwt.payload['paymentToken'].toString();
+
+            final respCode = jwt.payload['respCode'];
+            context.read<JWTModels>().respCode =
+                jwt.payload['respCode'].toString();
+
+            final respDesc = jwt.payload['respDesc'];
+            context.read<JWTModels>().respDesc =
+                jwt.payload['respDesc'].toString();
+
+            if (respCode == "0000") {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => RedirectPaymentPage(
+                          context.read<JWTModels>().webPaymentURL)));
+            }
+          });
+        } on JWTError catch (ex) {
+          print(ex.message); // ex: invalid signature
+        }
+      }
+      return "0";
+    } catch (ex) {
+      print('exception: ' + ex.toString());
+      final snackBar = SnackBar(
+        content: Text(ex.toString()),
+        duration: const Duration(seconds: 10),
+        action: SnackBarAction(
+          label: 'Close',
+          onPressed: () {
+            // Some code to undo the change.
+            Navigator.pop(context);
+          },
+        ),
+      );
+      // ignore: deprecated_member_use
+      _scaffoldKey.currentState!.showSnackBar(snackBar);
+    }
+
+    return "";
   }
 
   Future<String> requestPaymentToken(String token) async {
@@ -113,20 +201,6 @@ class _FormTokenDemo01State extends State<FormTokenDemo01> {
             context.read<JWTModels>().respCode = responseJson['respCode'];
             context.read<JWTModels>().respDesc = responseJson['respDesc'];
           });
-
-          // final snackBar = SnackBar(
-          //   content: Text(responseJson['respDesc']),
-          //   duration: const Duration(seconds: 10),
-          //   action: SnackBarAction(
-          //     label: 'Close',
-          //     onPressed: () {
-          //       // Some code to undo the change.
-          //       Navigator.pop(context);
-          //     },
-          //   ),
-          // );
-          // ignore: deprecated_member_use
-          //_scaffoldKey.currentState!.showSnackBar(snackBar);
           return "";
         }
         context.read<JWTModels>().decodedToken = responseBody;
@@ -187,6 +261,34 @@ class _FormTokenDemo01State extends State<FormTokenDemo01> {
     return "1";
   }
 
+  // void getBackendResponse() async {
+  //   final backendRequestBody = await http.get(
+  //       Uri.parse(backendReturnURL),
+  //       headers: {'content-type': 'application/json'},
+  //       // body: jsonEncode({
+  //       //   'payload': tokenValue,
+  //       // }),
+  //     );
+
+  //     if (backendRequestBody.statusCode == 200) {
+  //       final responseJson = convert.jsonDecode(backendRequestBody.body);
+  //       final responseBodyToken = responseJson['payload'];
+
+  //       print('Status Code: ${backendRequestBody.statusCode}');
+  //       print('Response: ${backendRequestBody.body}');
+  //       print('Response: $responseJson');
+  //       print('Response Token: $responseBodyToken');
+
+  //       if (responseBodyToken == null) {
+  //         print(responseJson['respDesc']);
+  //         setState(() {
+  //           context.read<JWTModels>().respCode = responseJson['respCode'];
+  //           context.read<JWTModels>().respDesc = responseJson['respDesc'];
+  //         });
+  //         return ;
+  //       }
+  // }
+
   void responseBackend() async {
     try {
       // JWT Decode
@@ -210,6 +312,24 @@ class _FormTokenDemo01State extends State<FormTokenDemo01> {
   Widget build(BuildContext context) {
     return Scaffold(
         key: _scaffoldKey,
+        appBar: AppBar(
+          title: const Text('Redirect Payment'),
+          centerTitle: true,
+          backgroundColor: Colors.transparent,
+          elevation: 1,
+          flexibleSpace: Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                  begin: Alignment.centerLeft,
+                  end: Alignment.centerRight,
+                  colors: [
+                    Colors.teal.withOpacity(0.8),
+                    //Colors.white.withOpacity(0.7),
+                    Colors.purple[900]!.withOpacity(0.8),
+                  ]),
+            ),
+          ),
+        ),
         body: SingleChildScrollView(
           physics: const BouncingScrollPhysics(),
           child: Form(
@@ -238,10 +358,11 @@ class _FormTokenDemo01State extends State<FormTokenDemo01> {
                         decoration: const InputDecoration(
                           border: InputBorder.none,
                           filled: true,
-                          fillColor: Color.fromARGB(255, 244, 245, 198),
+                          fillColor: Color.fromARGB(255, 36, 35, 35),
                           hintText: "Input secret key",
                         ),
-                        style: TextStyle(color: Colors.red[900]),
+                        style:
+                            const TextStyle(color: Colors.white, fontSize: 13),
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return 'Please input secret key.';
@@ -269,21 +390,22 @@ class _FormTokenDemo01State extends State<FormTokenDemo01> {
                       const SizedBox(height: 5),
                       Row(
                         children: [
-                          const Expanded(flex: 1, child: Text('Merchant ID:')),
+                          const Expanded(flex: 1, child: Text('Merchant ID :')),
                           Expanded(
                             flex: 3,
                             child: SizedBox(
-                              height: 40,
+                              height: 50,
                               child: TextFormField(
                                 keyboardType: TextInputType.multiline,
                                 initialValue: mid,
                                 decoration: const InputDecoration(
                                   border: InputBorder.none,
                                   filled: true,
-                                  fillColor: Color.fromARGB(255, 244, 245, 198),
-                                  hintText: "Input message request",
+                                  fillColor: Color.fromARGB(255, 36, 35, 35),
+                                  hintText: "Input merchant ID",
                                 ),
-                                style: TextStyle(color: Colors.red[900]),
+                                style: const TextStyle(
+                                    color: Colors.white, fontSize: 13),
                                 validator: (value) {
                                   if (value == null || value.isEmpty) {
                                     return 'Please input request message payload.';
@@ -292,12 +414,11 @@ class _FormTokenDemo01State extends State<FormTokenDemo01> {
                                 },
                                 onChanged: (value) {
                                   setState(() {
-                                    context.read<JWTModels>().requestMsg =
-                                        value;
+                                    context.read<JWTModels>().mid = value;
                                   });
                                 },
                                 onSaved: (value) {
-                                  context.read<JWTModels>().requestMsg = value;
+                                  context.read<JWTModels>().mid = value;
                                 },
                               ),
                             ),
@@ -305,96 +426,167 @@ class _FormTokenDemo01State extends State<FormTokenDemo01> {
                         ],
                       ),
                       const SizedBox(height: 5),
-                      TextFormField(
-                        keyboardType: TextInputType.multiline,
-                        maxLines: 6,
-                        initialValue: requestMsg,
-                        decoration: const InputDecoration(
-                          border: InputBorder.none,
-                          filled: true,
-                          fillColor: Color.fromARGB(255, 244, 245, 198),
-                          hintText: "Input message request",
-                        ),
-                        style: TextStyle(color: Colors.red[900]),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please input request message payload.';
-                          }
-                          return null;
-                        },
-                        onChanged: (value) {
-                          setState(() {
-                            context.read<JWTModels>().requestMsg = value;
-                          });
-                        },
-                        onSaved: (value) {
-                          context.read<JWTModels>().requestMsg = value;
-                        },
-                      ),
-                      const SizedBox(height: 5),
-                      SizedBox(
-                        width: double.infinity,
-                        height: 35,
-                        child: ElevatedButton(
-                            onPressed: () async {
-                              if (_formKey.currentState!.validate()) {
-                                _formKey.currentState!.save();
-                                await encodePayloadJWT();
-                              }
-                            },
-                            child: const Text(
-                              "JWT Encode",
-                            )),
-                      ),
-                      const SizedBox(height: 10),
-                      const Text(
-                        "Encoded",
-                        style: TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.bold),
-                      ),
-                      const SizedBox(height: 5),
-                      Container(
-                        width: double.infinity,
-                        padding: const EdgeInsets.all(10),
-                        decoration: BoxDecoration(
-                          color: Colors.grey[900],
-                        ),
-                        child: context.read<JWTModels>().encodedToken == null
-                            ? const Text(
-                                'Tap JWT Encode to get token',
-                                style: TextStyle(color: Colors.yellow),
-                              )
-                            : Text(
-                                context.read<JWTModels>().encodedToken ?? "",
+                      Row(
+                        children: [
+                          const Expanded(flex: 1, child: Text('Invoice no. :')),
+                          Expanded(
+                            flex: 3,
+                            child: SizedBox(
+                              height: 50,
+                              child: TextFormField(
+                                keyboardType: TextInputType.multiline,
+                                initialValue: invNo,
+                                decoration: const InputDecoration(
+                                  border: InputBorder.none,
+                                  filled: true,
+                                  fillColor: Color.fromARGB(255, 36, 35, 35),
+                                  hintText: "Input invoice no.",
+                                ),
                                 style: const TextStyle(
-                                    color: Colors.yellow, fontSize: 10),
+                                    color: Colors.white, fontSize: 13),
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Please input request message payload.';
+                                  }
+                                  return null;
+                                },
+                                onChanged: (value) {
+                                  setState(() {
+                                    context.read<JWTModels>().invNo = value;
+                                  });
+                                },
+                                onSaved: (value) {
+                                  context.read<JWTModels>().invNo = value;
+                                },
                               ),
+                            ),
+                          ),
+                        ],
                       ),
                       const SizedBox(height: 5),
-                      const Text(
-                        "Request Body",
-                        style: TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.bold),
-                      ),
-                      const SizedBox(height: 5),
-                      Container(
-                        width: double.infinity,
-                        padding: const EdgeInsets.all(10),
-                        decoration: BoxDecoration(
-                          color: Colors.grey[900],
-                        ),
-                        child: context.read<JWTModels>().encodedToken == null
-                            ? const Text(
-                                '{  \n"payload": "<Encoded token from above>"\n}',
-                                style: TextStyle(color: Colors.yellow),
-                              )
-                            : Text(
-                                '{  \n"payload": "${context.read<JWTModels>().encodedToken}"\n}',
+                      Row(
+                        children: [
+                          const Expanded(flex: 1, child: Text('Description :')),
+                          Expanded(
+                            flex: 3,
+                            child: SizedBox(
+                              height: 50,
+                              child: TextFormField(
+                                keyboardType: TextInputType.multiline,
+                                initialValue: description,
+                                decoration: const InputDecoration(
+                                  border: InputBorder.none,
+                                  filled: true,
+                                  fillColor: Color.fromARGB(255, 36, 35, 35),
+                                  hintText: "Input description",
+                                ),
                                 style: const TextStyle(
-                                    color: Colors.yellow, fontSize: 10),
+                                    color: Colors.white, fontSize: 13),
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Please input request message payload.';
+                                  }
+                                  return null;
+                                },
+                                onChanged: (value) {
+                                  setState(() {
+                                    context.read<JWTModels>().description =
+                                        value;
+                                  });
+                                },
+                                onSaved: (value) {
+                                  context.read<JWTModels>().description = value;
+                                },
                               ),
+                            ),
+                          ),
+                        ],
                       ),
-                      const SizedBox(height: 10),
+                      const SizedBox(height: 5),
+                      Row(
+                        children: [
+                          const Expanded(flex: 1, child: Text('Amount :')),
+                          Expanded(
+                            flex: 3,
+                            child: SizedBox(
+                              height: 50,
+                              child: TextFormField(
+                                keyboardType: TextInputType.number,
+                                initialValue: amount.toString(),
+                                decoration: const InputDecoration(
+                                  border: InputBorder.none,
+                                  filled: true,
+                                  fillColor: Color.fromARGB(255, 36, 35, 35),
+                                  hintText: "Input amount",
+                                ),
+                                style: const TextStyle(
+                                    color: Colors.white, fontSize: 13),
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Please input request message payload.';
+                                  }
+                                  return null;
+                                },
+                                onChanged: (value) {
+                                  setState(() {
+                                    context.read<JWTModels>().amount =
+                                        double.parse(value);
+                                  });
+                                },
+                                onSaved: (value) {
+                                  context.read<JWTModels>().amount =
+                                      double.parse(value!);
+                                },
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      // const SizedBox(height: 5),
+                      // Container(
+                      //   width: double.infinity,
+                      //   padding: const EdgeInsets.all(10),
+                      //   decoration: BoxDecoration(
+                      //     color: Colors.grey[900],
+                      //   ),
+                      //   child: context.read<JWTModels>().amount == null
+                      //       ? const Text(
+                      //           'No message request',
+                      //           style: TextStyle(color: Colors.redAccent),
+                      //         )
+                      //       : Text(
+                      //           '$requestMsg',
+                      //           style: const TextStyle(
+                      //               color: Colors.cyanAccent, fontSize: 13),
+                      //         ),
+                      // ),
+                      // TextFormField(
+                      //   keyboardType: TextInputType.multiline,
+                      //   maxLines: 6,
+                      //   initialValue: context.read<JWTModels>().requestMsg,
+                      //   decoration: const InputDecoration(
+                      //     border: InputBorder.none,
+                      //     filled: true,
+                      //     fillColor: Color.fromARGB(255, 244, 245, 198),
+                      //     hintText: "Input message request",
+                      //   ),
+                      //   style: TextStyle(color: Colors.red[900]),
+                      //   validator: (value) {
+                      //     if (value == null || value.isEmpty) {
+                      //       return 'Please input request message payload.';
+                      //     }
+                      //     return null;
+                      //   },
+                      //   onChanged: (value) {
+                      //     setState(() {
+                      //       context.read<JWTModels>().requestMsg = value;
+                      //     });
+                      //   },
+                      //   onSaved: (value) {
+                      //     context.read<JWTModels>().requestMsg = value;
+                      //   },
+                      // ),
+                      
                       const Text(
                         "Site",
                         style: TextStyle(
@@ -434,41 +626,6 @@ class _FormTokenDemo01State extends State<FormTokenDemo01> {
                           style: const TextStyle(
                               fontSize: 16, color: Colors.teal)),
                       const SizedBox(height: 20),
-                      SizedBox(
-                        width: double.infinity,
-                        height: 35,
-                        child: ElevatedButton(
-                            onPressed: () async {
-                              await requestPaymentToken(
-                                  context.read<JWTModels>().encodedToken);
-                            },
-                            child: const Text(
-                              "POST Request & Decode JWT",
-                            )),
-                      ),
-                      const SizedBox(height: 10),
-                      const Text(
-                        "Response",
-                        style: TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.bold),
-                      ),
-                      const SizedBox(height: 5),
-                      Container(
-                          width: double.infinity,
-                          padding: const EdgeInsets.all(10),
-                          decoration: BoxDecoration(
-                            color: Colors.grey[900],
-                          ),
-                          child: Text(
-                            context.read<JWTModels>().decodedToken == null &&
-                                    context.read<JWTModels>().respDesc == null
-                                ? '{  \n"payload": "<Response token from POST request>"\n}'
-                                : context.read<JWTModels>().respDesc ==
-                                        "Success"
-                                    ? '{  \n"payload": "${context.read<JWTModels>().decodedToken}"\n}'
-                                    : '{  \n"respCode": "${context.read<JWTModels>().respCode}"\n"respDesc": "${context.read<JWTModels>().respDesc}"\n}',
-                            style: const TextStyle(color: Colors.yellow),
-                          )),
                       const Text(
                         "Decoded",
                         style: TextStyle(
@@ -533,28 +690,28 @@ class _FormTokenDemo01State extends State<FormTokenDemo01> {
                                                   TextStyle(color: Colors.red),
                                             )),
                       const SizedBox(height: 10),
+                      
                       SizedBox(
-                          width: double.infinity,
-                          height: 35,
-                          child: context.read<JWTModels>().respDesc == "Success"
-                              ? ElevatedButton(
-                                  onPressed: () async {
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                RedirectPaymentPage(context
-                                                    .read<JWTModels>()
-                                                    .webPaymentURL)));
-                                  },
-                                  child: const Text(
-                                    "Go to 2c2p payment page",
-                                  ))
-                              : const Text(
-                                  "Please recheck your request message to get valid payment link button.",
-                                  style: TextStyle(color: Colors.red),
-                                )),
+                        width: double.infinity,
+                        height: 35,
+                        child: ElevatedButton(
+                            onPressed: () async {
+                              if (_formKey.currentState!.validate()) {
+                                _formKey.currentState!.save();
+
+                                await encodePayloadJWT();
+                              }
+                            },
+                            child: const Text(
+                              "Redirect Payment Page",
+                            )),
+                      ),
+                      
                       const SizedBox(height: 10),
+                      
+                      
+                      
+                      
                       const Divider(
                         thickness: 1,
                       ),

@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 
 class JWTModels extends ChangeNotifier {
   String? _secretKey;
+  String? _mid;
+  String? _invNo;
+  String? _description;
+  double? _amount;
   String? _requestMsg;
   String? _encodedToken;
   String? _requestBody;
@@ -18,6 +22,30 @@ class JWTModels extends ChangeNotifier {
   get secretKey => _secretKey;
   set secretKey(value) {
     _secretKey = value;
+    notifyListeners();
+  }
+
+  get mid => _mid;
+  set mid(value) {
+    _mid = value;
+    notifyListeners();
+  }
+
+  get invNo => _invNo;
+  set invNo(value) {
+    _invNo = value;
+    notifyListeners();
+  }
+
+  get description => _description;
+  set description(value) {
+    _description = value;
+    notifyListeners();
+  }
+
+  get amount => _amount;
+  set amount(value) {
+    _amount = double.parse(value.toString());
     notifyListeners();
   }
 
@@ -102,6 +130,10 @@ class JWTModels extends ChangeNotifier {
 class APIlog {
   APIlog(
       {this.secretKey,
+      this.mid,
+      this.invNo,
+      this.description,
+      this.amount,
       this.requestMsg,
       this.encodedToken,
       this.requestBody,
@@ -114,6 +146,10 @@ class APIlog {
       this.respCode,
       this.respDesc});
   String? secretKey;
+  String? mid;
+  String? invNo;
+  String? description;
+  double? amount;
   String? requestMsg;
   String? encodedToken;
   String? requestBody;

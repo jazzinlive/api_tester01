@@ -25,8 +25,10 @@ class MyApp extends StatelessWidget {
         title: 'Flutter Demo',
         theme: ThemeData(
           primarySwatch: Colors.deepPurple,
+          fontFamily: 'SukhumvitSet',
+            
         ),
-        home: const MyHomePage(title: 'Test API ver.1.0.4'),
+        home: MyHomePage(title: 'Test API ver.1.1.0'),
         debugShowCheckedModeBanner: false,
       ),
     );

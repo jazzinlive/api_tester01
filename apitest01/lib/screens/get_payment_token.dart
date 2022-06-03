@@ -18,6 +18,22 @@ class _GetPaymentTokenPageState extends State<GetPaymentTokenPage> {
       length: 3,
       child: Scaffold(
         appBar: AppBar(
+          title: const Text('Get Payment Token'),
+          centerTitle: true,
+          backgroundColor: Colors.transparent,
+          elevation: 1,
+          flexibleSpace: Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                  begin: Alignment.centerLeft,
+                  end: Alignment.centerRight,
+                  colors: [
+                    Colors.teal.withOpacity(0.8),
+                    //Colors.white.withOpacity(0.7),
+                    Colors.purple[900]!.withOpacity(0.8),
+                  ]),
+            ),
+          ),
           bottom: const TabBar(
             tabs: [
               Tab(
@@ -28,14 +44,21 @@ class _GetPaymentTokenPageState extends State<GetPaymentTokenPage> {
               Tab(icon: Icon(Icons.developer_board), text: "Demo02"),
             ],
           ),
-          title: const Text('Get Payment Token'),
         ),
-        body: const TabBarView(
-          children: [
-            GetPaymentToken(),
-            GetPaymentTokenDemo01(),
-            GetPaymentTokenDemo02()
-          ],
+       
+        body: Container(
+          decoration: const BoxDecoration(
+              image: DecorationImage(
+                  image: AssetImage('assets/gbg00.jpg'),
+                  fit: BoxFit.cover,
+                  colorFilter: ColorFilter.linearToSrgbGamma())),
+          child: const TabBarView(
+            children: [
+              GetPaymentToken(),
+              GetPaymentTokenDemo01(),
+              GetPaymentTokenDemo02()
+            ],
+          ),
         ),
       ),
     );
