@@ -330,462 +330,475 @@ class _FormTokenDemo01State extends State<FormTokenDemo01> {
             ),
           ),
         ),
-        body: SingleChildScrollView(
-          physics: const BouncingScrollPhysics(),
-          child: Form(
-              key: _formKey,
-              child: Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        "Secret Key",
-                        style: TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.bold),
-                      ),
-                      const SizedBox(height: 5),
-                      TextFormField(
-                        keyboardType: TextInputType.multiline,
-                        initialValue: secretKey,
-                        maxLines: 2,
-                        toolbarOptions: const ToolbarOptions(
-                            copy: true,
-                            cut: true,
-                            paste: true,
-                            selectAll: true),
-                        decoration: const InputDecoration(
-                          border: InputBorder.none,
-                          filled: true,
-                          fillColor: Color.fromARGB(255, 36, 35, 35),
-                          hintText: "Input secret key",
+        body: Container(
+          decoration: const BoxDecoration(
+              image: DecorationImage(
+                  image: AssetImage('assets/gbg00.jpg'),
+                  fit: BoxFit.cover,
+                  colorFilter: ColorFilter.linearToSrgbGamma())),
+          child: SingleChildScrollView(
+            physics: const BouncingScrollPhysics(),
+            child: Form(
+                key: _formKey,
+                child: Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                  child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          "Secret Key",
+                          style: TextStyle(
+                              fontSize: 18, fontWeight: FontWeight.bold),
                         ),
-                        style:
-                            const TextStyle(color: Colors.white, fontSize: 13),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please input secret key.';
-                          }
-                          return null;
-                        },
-                        onChanged: (value) {
-                          setState(() {
+                        const SizedBox(height: 5),
+                        TextFormField(
+                          keyboardType: TextInputType.multiline,
+                          initialValue: secretKey,
+                          maxLines: 2,
+                          toolbarOptions: const ToolbarOptions(
+                              copy: true,
+                              cut: true,
+                              paste: true,
+                              selectAll: true),
+                          decoration: const InputDecoration(
+                            border: InputBorder.none,
+                            filled: true,
+                            fillColor: Color.fromARGB(255, 36, 35, 35),
+                            hintText: "Input secret key",
+                          ),
+                          style: const TextStyle(
+                              color: Colors.white, fontSize: 13),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please input secret key.';
+                            }
+                            return null;
+                          },
+                          onChanged: (value) {
+                            setState(() {
+                              context.read<JWTModels>().secretKey = value;
+                            });
+                          },
+                          onSaved: (value) {
                             context.read<JWTModels>().secretKey = value;
-                          });
-                        },
-                        onSaved: (value) {
-                          context.read<JWTModels>().secretKey = value;
-                        },
-                      ),
-                      const SizedBox(
-                        height: 5,
-                      ),
-                      const SizedBox(height: 5),
-                      const Text(
-                        "Message Request",
-                        style: TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.bold),
-                      ),
-                      const SizedBox(height: 5),
-                      Row(
-                        children: [
-                          const Expanded(flex: 1, child: Text('Merchant ID :')),
-                          Expanded(
-                            flex: 3,
-                            child: SizedBox(
-                              height: 50,
-                              child: TextFormField(
-                                keyboardType: TextInputType.multiline,
-                                initialValue: mid,
-                                decoration: const InputDecoration(
-                                  border: InputBorder.none,
-                                  filled: true,
-                                  fillColor: Color.fromARGB(255, 36, 35, 35),
-                                  hintText: "Input merchant ID",
-                                ),
-                                style: const TextStyle(
-                                    color: Colors.white, fontSize: 13),
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return 'Please input request message payload.';
-                                  }
-                                  return null;
-                                },
-                                onChanged: (value) {
-                                  setState(() {
+                          },
+                        ),
+                        const SizedBox(
+                          height: 5,
+                        ),
+                        const SizedBox(height: 5),
+                        const Text(
+                          "Message Request",
+                          style: TextStyle(
+                              fontSize: 18, fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(height: 5),
+                        Row(
+                          children: [
+                            const Expanded(
+                                flex: 1, child: Text('Merchant ID :')),
+                            Expanded(
+                              flex: 3,
+                              child: SizedBox(
+                                height: 50,
+                                child: TextFormField(
+                                  keyboardType: TextInputType.multiline,
+                                  initialValue: mid,
+                                  decoration: const InputDecoration(
+                                    border: InputBorder.none,
+                                    filled: true,
+                                    fillColor: Color.fromARGB(255, 36, 35, 35),
+                                    hintText: "Input merchant ID",
+                                  ),
+                                  style: const TextStyle(
+                                      color: Colors.white, fontSize: 13),
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return 'Please input request message payload.';
+                                    }
+                                    return null;
+                                  },
+                                  onChanged: (value) {
+                                    setState(() {
+                                      context.read<JWTModels>().mid = value;
+                                    });
+                                  },
+                                  onSaved: (value) {
                                     context.read<JWTModels>().mid = value;
-                                  });
-                                },
-                                onSaved: (value) {
-                                  context.read<JWTModels>().mid = value;
-                                },
+                                  },
+                                ),
                               ),
                             ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 5),
-                      Row(
-                        children: [
-                          const Expanded(flex: 1, child: Text('Invoice no. :')),
-                          Expanded(
-                            flex: 3,
-                            child: SizedBox(
-                              height: 50,
-                              child: TextFormField(
-                                keyboardType: TextInputType.multiline,
-                                initialValue: invNo,
-                                decoration: const InputDecoration(
-                                  border: InputBorder.none,
-                                  filled: true,
-                                  fillColor: Color.fromARGB(255, 36, 35, 35),
-                                  hintText: "Input invoice no.",
-                                ),
-                                style: const TextStyle(
-                                    color: Colors.white, fontSize: 13),
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return 'Please input request message payload.';
-                                  }
-                                  return null;
-                                },
-                                onChanged: (value) {
-                                  setState(() {
+                          ],
+                        ),
+                        const SizedBox(height: 5),
+                        Row(
+                          children: [
+                            const Expanded(
+                                flex: 1, child: Text('Invoice no. :')),
+                            Expanded(
+                              flex: 3,
+                              child: SizedBox(
+                                height: 50,
+                                child: TextFormField(
+                                  keyboardType: TextInputType.multiline,
+                                  initialValue: invNo,
+                                  decoration: const InputDecoration(
+                                    border: InputBorder.none,
+                                    filled: true,
+                                    fillColor: Color.fromARGB(255, 36, 35, 35),
+                                    hintText: "Input invoice no.",
+                                  ),
+                                  style: const TextStyle(
+                                      color: Colors.white, fontSize: 13),
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return 'Please input request message payload.';
+                                    }
+                                    return null;
+                                  },
+                                  onChanged: (value) {
+                                    setState(() {
+                                      context.read<JWTModels>().invNo = value;
+                                    });
+                                  },
+                                  onSaved: (value) {
                                     context.read<JWTModels>().invNo = value;
-                                  });
-                                },
-                                onSaved: (value) {
-                                  context.read<JWTModels>().invNo = value;
-                                },
+                                  },
+                                ),
                               ),
                             ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 5),
-                      Row(
-                        children: [
-                          const Expanded(flex: 1, child: Text('Description :')),
-                          Expanded(
-                            flex: 3,
-                            child: SizedBox(
-                              height: 50,
-                              child: TextFormField(
-                                keyboardType: TextInputType.multiline,
-                                initialValue: description,
-                                decoration: const InputDecoration(
-                                  border: InputBorder.none,
-                                  filled: true,
-                                  fillColor: Color.fromARGB(255, 36, 35, 35),
-                                  hintText: "Input description",
-                                ),
-                                style: const TextStyle(
-                                    color: Colors.white, fontSize: 13),
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return 'Please input request message payload.';
-                                  }
-                                  return null;
-                                },
-                                onChanged: (value) {
-                                  setState(() {
+                          ],
+                        ),
+                        const SizedBox(height: 5),
+                        Row(
+                          children: [
+                            const Expanded(
+                                flex: 1, child: Text('Description :')),
+                            Expanded(
+                              flex: 3,
+                              child: SizedBox(
+                                height: 50,
+                                child: TextFormField(
+                                  keyboardType: TextInputType.multiline,
+                                  initialValue: description,
+                                  decoration: const InputDecoration(
+                                    border: InputBorder.none,
+                                    filled: true,
+                                    fillColor: Color.fromARGB(255, 36, 35, 35),
+                                    hintText: "Input description",
+                                  ),
+                                  style: const TextStyle(
+                                      color: Colors.white, fontSize: 13),
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return 'Please input request message payload.';
+                                    }
+                                    return null;
+                                  },
+                                  onChanged: (value) {
+                                    setState(() {
+                                      context.read<JWTModels>().description =
+                                          value;
+                                    });
+                                  },
+                                  onSaved: (value) {
                                     context.read<JWTModels>().description =
                                         value;
-                                  });
-                                },
-                                onSaved: (value) {
-                                  context.read<JWTModels>().description = value;
-                                },
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 5),
-                      Row(
-                        children: [
-                          const Expanded(flex: 1, child: Text('Amount :')),
-                          Expanded(
-                            flex: 3,
-                            child: SizedBox(
-                              height: 50,
-                              child: TextFormField(
-                                keyboardType: TextInputType.number,
-                                initialValue: amount.toString(),
-                                decoration: const InputDecoration(
-                                  border: InputBorder.none,
-                                  filled: true,
-                                  fillColor: Color.fromARGB(255, 36, 35, 35),
-                                  hintText: "Input amount",
+                                  },
                                 ),
-                                style: const TextStyle(
-                                    color: Colors.white, fontSize: 13),
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return 'Please input request message payload.';
-                                  }
-                                  return null;
-                                },
-                                onChanged: (value) {
-                                  setState(() {
-                                    context.read<JWTModels>().amount =
-                                        double.parse(value);
-                                  });
-                                },
-                                onSaved: (value) {
-                                  context.read<JWTModels>().amount =
-                                      double.parse(value!);
-                                },
                               ),
                             ),
-                          ),
-                        ],
-                      ),
-                      // const SizedBox(height: 5),
-                      // Container(
-                      //   width: double.infinity,
-                      //   padding: const EdgeInsets.all(10),
-                      //   decoration: BoxDecoration(
-                      //     color: Colors.grey[900],
-                      //   ),
-                      //   child: context.read<JWTModels>().amount == null
-                      //       ? const Text(
-                      //           'No message request',
-                      //           style: TextStyle(color: Colors.redAccent),
-                      //         )
-                      //       : Text(
-                      //           '$requestMsg',
-                      //           style: const TextStyle(
-                      //               color: Colors.cyanAccent, fontSize: 13),
-                      //         ),
-                      // ),
-                      // TextFormField(
-                      //   keyboardType: TextInputType.multiline,
-                      //   maxLines: 6,
-                      //   initialValue: context.read<JWTModels>().requestMsg,
-                      //   decoration: const InputDecoration(
-                      //     border: InputBorder.none,
-                      //     filled: true,
-                      //     fillColor: Color.fromARGB(255, 244, 245, 198),
-                      //     hintText: "Input message request",
-                      //   ),
-                      //   style: TextStyle(color: Colors.red[900]),
-                      //   validator: (value) {
-                      //     if (value == null || value.isEmpty) {
-                      //       return 'Please input request message payload.';
-                      //     }
-                      //     return null;
-                      //   },
-                      //   onChanged: (value) {
-                      //     setState(() {
-                      //       context.read<JWTModels>().requestMsg = value;
-                      //     });
-                      //   },
-                      //   onSaved: (value) {
-                      //     context.read<JWTModels>().requestMsg = value;
-                      //   },
-                      // ),
-                      
-                      const Text(
-                        "Site",
-                        style: TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.bold),
-                      ),
-                      const SizedBox(height: 5),
-                      DropdownButton<String>(
-                        value: dropdownValue,
-                        icon: const Icon(Icons.arrow_drop_down),
-                        underline:
-                            Container(height: 2, color: Colors.transparent),
-                        style: const TextStyle(
-                            color: Colors.red,
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold),
-                        onChanged: (data) {
-                          setState(() {
-                            dropdownValue = data!;
-                            if (data == "DEMO") {
-                              endpointURL =
-                                  'https://sandbox-pgw.2c2p.com/payment/4.1/paymentToken';
-                            } else {
-                              endpointURL =
-                                  'https://pgw.2c2p.com/payment/4.1/paymentToken';
-                            }
-                          });
-                        },
-                        items: siteType
-                            .map<DropdownMenuItem<String>>((String value) {
-                          return DropdownMenuItem<String>(
-                            value: value,
-                            child: Text(value),
-                          );
-                        }).toList(),
-                      ),
-                      Text(endpointURL!,
-                          style: const TextStyle(
-                              fontSize: 16, color: Colors.teal)),
-                      const SizedBox(height: 20),
-                      const Text(
-                        "Decoded",
-                        style: TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.bold),
-                      ),
-                      const SizedBox(height: 5),
-                      Container(
-                          width: double.infinity,
-                          padding: const EdgeInsets.all(10),
-                          decoration: BoxDecoration(
-                            color: Colors.grey[900],
-                          ),
-                          child: context
-                                          .read<JWTModels>()
-                                          .decodedToken ==
-                                      null &&
-                                  context.read<JWTModels>().respDesc == null
-                              ? const Text(
-                                  '{  \n"webPaymentURL": "<webPaymentToken>"\n"paymentToken": "<paymentToken>"\n"respCode": "<respCode>"\n"respDesc": "<respDesc>"\n}',
-                                  style: TextStyle(color: Colors.yellow),
-                                )
-                              : context.read<JWTModels>().respDesc == "Success"
-                                  ? RichText(
-                                      text: TextSpan(
-                                          text:
-                                              '{  \n"webPaymentURL": "${context.read<JWTModels>().webPaymentURL}",',
-                                          style: const TextStyle(
-                                              color: Colors.cyanAccent),
-                                          children: <TextSpan>[
-                                          TextSpan(
-                                              text:
-                                                  '\n"paymentToken": "${context.read<JWTModels>().paymentToken}",',
-                                              style: const TextStyle(
-                                                  color: Colors.orangeAccent)),
-                                          TextSpan(
-                                              text:
-                                                  '\n"respCode": "${context.read<JWTModels>().respCode}",',
-                                              style: TextStyle(
-                                                  color: Colors.purple[200])),
-                                          TextSpan(
-                                              text:
-                                                  '\n"respDesc": "${context.read<JWTModels>().respDesc}",\n}',
-                                              style: const TextStyle(
-                                                  color:
-                                                      Colors.lightGreenAccent)),
-                                        ]))
-                                  : context.read<JWTModels>().respCode == "9042"
-                                      ? const Text(
-                                          'Invalid hash value.',
-                                          style: TextStyle(color: Colors.red),
-                                        )
-                                      : context.read<JWTModels>().respCode ==
-                                              "9007"
-                                          ? const Text(
-                                              'Merchant id is not found.',
-                                              style:
-                                                  TextStyle(color: Colors.red),
-                                            )
-                                          : const Text(
-                                              'Decode not success.',
-                                              style:
-                                                  TextStyle(color: Colors.red),
-                                            )),
-                      const SizedBox(height: 10),
-                      
-                      SizedBox(
-                        width: double.infinity,
-                        height: 35,
-                        child: ElevatedButton(
-                            onPressed: () async {
-                              if (_formKey.currentState!.validate()) {
-                                _formKey.currentState!.save();
-
-                                await encodePayloadJWT();
-                              }
-                            },
-                            child: const Text(
-                              "Redirect Payment Page",
-                            )),
-                      ),
-                      
-                      const SizedBox(height: 10),
-                      
-                      
-                      
-                      
-                      const Divider(
-                        thickness: 1,
-                      ),
-                      const Text(
-                        "After payment successful",
-                        style: TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.bold),
-                      ),
-                      const Divider(
-                        thickness: 1,
-                      ),
-                      const SizedBox(height: 10),
-                      const Text(
-                        "Backend Response Token",
-                        style: TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.bold),
-                      ),
-                      const SizedBox(height: 5),
-                      TextFormField(
-                        keyboardType: TextInputType.multiline,
-                        maxLines: 10,
-                        initialValue: respBackToken,
-                        decoration: const InputDecoration(
-                          border: InputBorder.none,
-                          filled: true,
-                          fillColor: Color.fromARGB(255, 244, 245, 198),
-                          hintText:
-                              "Input response token you get from your server",
+                          ],
                         ),
-                        style: TextStyle(color: Colors.red[900], fontSize: 10),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please input response token.';
-                          }
-                          return null;
-                        },
-                        onChanged: (value) {
-                          setState(() {
-                            context.read<JWTModels>().response = value;
-                          });
-                        },
-                        onSaved: (value) {
-                          context.read<JWTModels>().response = value;
-                        },
-                      ),
-                      const SizedBox(height: 5),
-                      SizedBox(
-                        width: double.infinity,
-                        height: 35,
-                        child: ElevatedButton(
-                            onPressed: () async {
-                              if (_formKey.currentState!.validate()) {
-                                _formKey.currentState!.save();
-                                responseBackend();
+                        const SizedBox(height: 5),
+                        Row(
+                          children: [
+                            const Expanded(flex: 1, child: Text('Amount :')),
+                            Expanded(
+                              flex: 3,
+                              child: SizedBox(
+                                height: 50,
+                                child: TextFormField(
+                                  keyboardType: TextInputType.number,
+                                  initialValue: amount.toString(),
+                                  decoration: const InputDecoration(
+                                    border: InputBorder.none,
+                                    filled: true,
+                                    fillColor: Color.fromARGB(255, 36, 35, 35),
+                                    hintText: "Input amount",
+                                  ),
+                                  style: const TextStyle(
+                                      color: Colors.white, fontSize: 13),
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return 'Please input request message payload.';
+                                    }
+                                    return null;
+                                  },
+                                  onChanged: (value) {
+                                    setState(() {
+                                      context.read<JWTModels>().amount =
+                                          double.parse(value);
+                                    });
+                                  },
+                                  onSaved: (value) {
+                                    context.read<JWTModels>().amount =
+                                        double.parse(value!);
+                                  },
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        // const SizedBox(height: 5),
+                        // Container(
+                        //   width: double.infinity,
+                        //   padding: const EdgeInsets.all(10),
+                        //   decoration: BoxDecoration(
+                        //     color: Colors.grey[900],
+                        //   ),
+                        //   child: context.read<JWTModels>().amount == null
+                        //       ? const Text(
+                        //           'No message request',
+                        //           style: TextStyle(color: Colors.redAccent),
+                        //         )
+                        //       : Text(
+                        //           '$requestMsg',
+                        //           style: const TextStyle(
+                        //               color: Colors.cyanAccent, fontSize: 13),
+                        //         ),
+                        // ),
+                        // TextFormField(
+                        //   keyboardType: TextInputType.multiline,
+                        //   maxLines: 6,
+                        //   initialValue: context.read<JWTModels>().requestMsg,
+                        //   decoration: const InputDecoration(
+                        //     border: InputBorder.none,
+                        //     filled: true,
+                        //     fillColor: Color.fromARGB(255, 244, 245, 198),
+                        //     hintText: "Input message request",
+                        //   ),
+                        //   style: TextStyle(color: Colors.red[900]),
+                        //   validator: (value) {
+                        //     if (value == null || value.isEmpty) {
+                        //       return 'Please input request message payload.';
+                        //     }
+                        //     return null;
+                        //   },
+                        //   onChanged: (value) {
+                        //     setState(() {
+                        //       context.read<JWTModels>().requestMsg = value;
+                        //     });
+                        //   },
+                        //   onSaved: (value) {
+                        //     context.read<JWTModels>().requestMsg = value;
+                        //   },
+                        // ),
+
+                        const Text(
+                          "Site",
+                          style: TextStyle(
+                              fontSize: 18, fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(height: 5),
+                        DropdownButton<String>(
+                          value: dropdownValue,
+                          icon: const Icon(Icons.arrow_drop_down),
+                          underline:
+                              Container(height: 2, color: Colors.transparent),
+                          style: const TextStyle(
+                              color: Colors.red,
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold),
+                          onChanged: (data) {
+                            setState(() {
+                              dropdownValue = data!;
+                              if (data == "DEMO") {
+                                endpointURL =
+                                    'https://sandbox-pgw.2c2p.com/payment/4.1/paymentToken';
+                              } else {
+                                endpointURL =
+                                    'https://pgw.2c2p.com/payment/4.1/paymentToken';
                               }
-                            },
-                            child: const Text(
-                              "Decode Response Backend Notification",
-                            )),
-                      ),
-                      const SizedBox(height: 10),
-                      Container(
+                            });
+                          },
+                          items: siteType
+                              .map<DropdownMenuItem<String>>((String value) {
+                            return DropdownMenuItem<String>(
+                              value: value,
+                              child: Text(value),
+                            );
+                          }).toList(),
+                        ),
+                        Text(endpointURL!,
+                            style: const TextStyle(
+                                fontSize: 16, color: Colors.teal)),
+                        const SizedBox(height: 20),
+                        const Text(
+                          "Decoded",
+                          style: TextStyle(
+                              fontSize: 18, fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(height: 5),
+                        Container(
+                            width: double.infinity,
+                            padding: const EdgeInsets.all(10),
+                            decoration: BoxDecoration(
+                              color: Colors.grey[900],
+                            ),
+                            child: context.read<JWTModels>().decodedToken ==
+                                        null &&
+                                    context.read<JWTModels>().respDesc == null
+                                ? const Text(
+                                    '{  \n"webPaymentURL": "<webPaymentToken>"\n"paymentToken": "<paymentToken>"\n"respCode": "<respCode>"\n"respDesc": "<respDesc>"\n}',
+                                    style: TextStyle(color: Colors.yellow),
+                                  )
+                                : context.read<JWTModels>().respDesc ==
+                                        "Success"
+                                    ? RichText(
+                                        text: TextSpan(
+                                            text:
+                                                '{  \n"webPaymentURL": "${context.read<JWTModels>().webPaymentURL}",',
+                                            style: const TextStyle(
+                                                color: Colors.cyanAccent),
+                                            children: <TextSpan>[
+                                            TextSpan(
+                                                text:
+                                                    '\n"paymentToken": "${context.read<JWTModels>().paymentToken}",',
+                                                style: const TextStyle(
+                                                    color:
+                                                        Colors.orangeAccent)),
+                                            TextSpan(
+                                                text:
+                                                    '\n"respCode": "${context.read<JWTModels>().respCode}",',
+                                                style: TextStyle(
+                                                    color: Colors.purple[200])),
+                                            TextSpan(
+                                                text:
+                                                    '\n"respDesc": "${context.read<JWTModels>().respDesc}",\n}',
+                                                style: const TextStyle(
+                                                    color: Colors
+                                                        .lightGreenAccent)),
+                                          ]))
+                                    : context.read<JWTModels>().respCode ==
+                                            "9042"
+                                        ? const Text(
+                                            'Invalid hash value.',
+                                            style: TextStyle(color: Colors.red),
+                                          )
+                                        : context.read<JWTModels>().respCode ==
+                                                "9007"
+                                            ? const Text(
+                                                'Merchant id is not found.',
+                                                style: TextStyle(
+                                                    color: Colors.red),
+                                              )
+                                            : const Text(
+                                                'Decode not success.',
+                                                style: TextStyle(
+                                                    color: Colors.red),
+                                              )),
+                        const SizedBox(height: 10),
+
+                        SizedBox(
                           width: double.infinity,
-                          padding: const EdgeInsets.all(10),
-                          decoration: BoxDecoration(
-                            color: Colors.grey[900],
+                          height: 35,
+                          child: ElevatedButton(
+                              onPressed: () async {
+                                if (_formKey.currentState!.validate()) {
+                                  _formKey.currentState!.save();
+
+                                  await encodePayloadJWT();
+                                }
+                              },
+                              child: const Text(
+                                "Redirect Payment Page",
+                              )),
+                        ),
+
+                        const SizedBox(height: 10),
+
+                        const Divider(
+                          thickness: 1,
+                        ),
+                        const Text(
+                          "After payment successful",
+                          style: TextStyle(
+                              fontSize: 18, fontWeight: FontWeight.bold),
+                        ),
+                        const Divider(
+                          thickness: 1,
+                        ),
+                        const SizedBox(height: 10),
+                        const Text(
+                          "Backend Response Token",
+                          style: TextStyle(
+                              fontSize: 18, fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(height: 5),
+                        TextFormField(
+                          keyboardType: TextInputType.multiline,
+                          maxLines: 10,
+                          initialValue: respBackToken,
+                          decoration: const InputDecoration(
+                            border: InputBorder.none,
+                            filled: true,
+                            fillColor: Color.fromARGB(255, 244, 245, 198),
+                            hintText:
+                                "Input response token you get from your server",
                           ),
-                          child: Text(
-                            context.read<JWTModels>().decodedPayload.toString(),
-                            style: const TextStyle(color: Colors.cyanAccent),
-                          )),
-                      const SizedBox(height: 10),
-                    ]),
-              )),
+                          style:
+                              TextStyle(color: Colors.red[900], fontSize: 10),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please input response token.';
+                            }
+                            return null;
+                          },
+                          onChanged: (value) {
+                            setState(() {
+                              context.read<JWTModels>().response = value;
+                            });
+                          },
+                          onSaved: (value) {
+                            context.read<JWTModels>().response = value;
+                          },
+                        ),
+                        const SizedBox(height: 5),
+                        SizedBox(
+                          width: double.infinity,
+                          height: 35,
+                          child: ElevatedButton(
+                              onPressed: () async {
+                                if (_formKey.currentState!.validate()) {
+                                  _formKey.currentState!.save();
+                                  responseBackend();
+                                }
+                              },
+                              child: const Text(
+                                "Decode Response Backend Notification",
+                              )),
+                        ),
+                        const SizedBox(height: 10),
+                        Container(
+                            width: double.infinity,
+                            padding: const EdgeInsets.all(10),
+                            decoration: BoxDecoration(
+                              color: Colors.grey[900],
+                            ),
+                            child: Text(
+                              context
+                                  .read<JWTModels>()
+                                  .decodedPayload
+                                  .toString(),
+                              style: const TextStyle(color: Colors.cyanAccent),
+                            )),
+                        const SizedBox(height: 10),
+                      ]),
+                )),
+          ),
         ));
   }
 }
