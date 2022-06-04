@@ -2,6 +2,7 @@ import 'package:apitest01/models/jwt_models.dart';
 import 'package:flutter/material.dart';
 import 'package:pgw_sdk/models/api_environment.dart';
 import 'package:pgw_sdk/pgw_sdk.dart';
+import 'models/qr_models.dart';
 import 'screens/home.dart';
 import 'package:provider/provider.dart';
 
@@ -19,6 +20,7 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (context) => JWTModels()),
+        ChangeNotifierProvider(create: (context) => QRModels()),
         Provider(create: (context) => APIlog())
       ],
       child: MaterialApp(

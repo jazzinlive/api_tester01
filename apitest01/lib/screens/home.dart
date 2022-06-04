@@ -8,25 +8,8 @@ import 'form_token_demo01.dart';
 
 class MyHomePage extends StatefulWidget {
   
-
   MyHomePage({Key? key, required this.title}) : super(key: key);
-
   final String title;
-  final dynamic listBg = [
-    'assets/gbg00.jpg',
-    'assets/gbg01.jpg',
-    'assets/gbg02.jpg',
-    'assets/gbg03.jpg',
-  ];
-  Random? rnd;
-  AssetImage img() {
-    int min = 0;
-    int max = listBg.length - 1;
-    rnd = Random();
-    int r = min + rnd!.nextInt(max - min);
-    String imageName = listBg[r].toString();
-    return AssetImage(imageName);
-  }
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
