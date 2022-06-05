@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class QRModels extends ChangeNotifier {
+class PaywiseModels extends ChangeNotifier {
   String? _appKey;
   String? _secretKey;
   String? _mid;
@@ -17,11 +17,11 @@ class QRModels extends ChangeNotifier {
   String? _responseQR2;
   String? _decodedToken;
   String? _decodedPayload;
-  String? _qrPaymentURL;
+  String? _deeplinkUrl;
   String? _paymentToken;
   String? _respCode;
   String? _respDesc;
-  List<QRAPIlog>? _logList = [];
+  List<Paywiselog>? _logList = [];
 
   get appKey => _appKey;
   set appKey(value) {
@@ -119,9 +119,9 @@ class QRModels extends ChangeNotifier {
     notifyListeners();
   }
 
-  get qrPaymentURL => _qrPaymentURL;
-  set qrPaymentURL(value) {
-    _qrPaymentURL = value;
+  get deeplinkUrl => _deeplinkUrl;
+  set deeplinkUrl(value) {
+    _deeplinkUrl = value;
     notifyListeners();
   }
 
@@ -143,20 +143,20 @@ class QRModels extends ChangeNotifier {
     notifyListeners();
   }
 
-  List<dynamic>? get qrLog => _logList;
+  List<dynamic>? get paywiseLog => _logList;
   set logList(List<dynamic>? value) {
-    _logList = value as List<QRAPIlog>;
+    _logList = value as List<Paywiselog>;
     notifyListeners();
   }
 
-  void addLog(QRAPIlog value) {
+  void addLog(Paywiselog value) {
     _logList!.add(value);
     notifyListeners();
   }
 }
 
-class QRAPIlog {
-  QRAPIlog(
+class Paywiselog {
+  Paywiselog(
       {this.appKey,
       this.secretKey,
       this.mid,
@@ -173,7 +173,7 @@ class QRAPIlog {
       this.responseQR2,
       this.decodedToken,
       this.decodedPayload,
-      this.qrPaymentURL,
+      this.deeplinkUrl,
       this.paymentToken,
       this.respCode,
       this.respDesc});
@@ -193,7 +193,7 @@ class QRAPIlog {
   String? responseQR2;
   String? decodedToken;
   String? decodedPayload;
-  String? qrPaymentURL;
+  String? deeplinkUrl;
   String? paymentToken;
   String? respCode;
   String? respDesc;

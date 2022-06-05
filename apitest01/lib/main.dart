@@ -2,6 +2,7 @@ import 'package:apitest01/models/jwt_models.dart';
 import 'package:flutter/material.dart';
 import 'package:pgw_sdk/models/api_environment.dart';
 import 'package:pgw_sdk/pgw_sdk.dart';
+import 'models/paywise_models.dart';
 import 'models/qr_models.dart';
 import 'screens/home.dart';
 import 'package:provider/provider.dart';
@@ -20,8 +21,11 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (context) => JWTModels()),
+        Provider(create: (context) => APIlog()),
         ChangeNotifierProvider(create: (context) => QRModels()),
-        Provider(create: (context) => APIlog())
+        Provider(create: (context) => QRAPIlog()),
+        ChangeNotifierProvider(create: (context) => PaywiseModels()),
+        Provider(create: (context) => Paywiselog())
       ],
       child: MaterialApp(
         title: 'Flutter Demo',
