@@ -49,6 +49,7 @@ dependencies:
   intl: ^0.17.0
   image_picker: ^0.7.2+1
   image_save: ^5.0.0
+  status_alert: ^1.0.0
   
 
 dev_dependencies:

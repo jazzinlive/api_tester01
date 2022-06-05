@@ -36,10 +36,7 @@ class _GetPaymentTokenPageState extends State<GetPaymentTokenPage> {
           ),
           bottom: const TabBar(
             tabs: [
-              Tab(
-                icon: Icon(Icons.sunny),
-                text: "Sandbox",
-              ),
+              Tab(icon: Icon(Icons.sunny), text: "Sandbox"),
               Tab(icon: Icon(Icons.developer_mode), text: "Demo01"),
               Tab(icon: Icon(Icons.developer_board), text: "Demo02"),
             ],

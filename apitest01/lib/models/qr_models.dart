@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 class QRModels extends ChangeNotifier {
+  String? _appKey;
   String? _secretKey;
   String? _mid;
   String? _tid;
@@ -21,6 +22,12 @@ class QRModels extends ChangeNotifier {
   String? _respCode;
   String? _respDesc;
   List<QRAPIlog>? _logList = [];
+
+  get appKey => _appKey;
+  set appKey(value) {
+    _appKey = value;
+    notifyListeners();
+  }
 
   get secretKey => _secretKey;
   set secretKey(value) {
@@ -150,7 +157,8 @@ class QRModels extends ChangeNotifier {
 
 class QRAPIlog {
   QRAPIlog(
-      {this.secretKey,
+      {this.appKey,
+      this.secretKey,
       this.mid,
       this.tid,
       this.invNo,
@@ -169,6 +177,7 @@ class QRAPIlog {
       this.paymentToken,
       this.respCode,
       this.respDesc});
+  String? appKey;
   String? secretKey;
   String? mid;
   String? tid;

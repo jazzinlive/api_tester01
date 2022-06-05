@@ -24,11 +24,10 @@ class _GetPaymentTokenDemo01State extends State<GetPaymentTokenDemo01> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   String pasteValue = '';
 
-  List<Site> sites = <Site>[const Site("DEMO"), const Site("Production")];
-  late Site selectedSite;
+  // List<Site> sites = <Site>[const Site("DEMO"), const Site("Production")];
+  // late Site selectedSite;
 
   String dropdownValue = "DEMO";
-  String holder = "";
   List<String> siteType = [
     'DEMO',
     'Production',
@@ -46,11 +45,6 @@ class _GetPaymentTokenDemo01State extends State<GetPaymentTokenDemo01> {
   String? tokenValue;
   
 
-  void getDropDownItem() {
-    setState(() {
-      holder = dropdownValue;
-    });
-  }
 
   Future<String> encodePayloadJWT() async {
     // step 1
@@ -360,6 +354,13 @@ class _GetPaymentTokenDemo01State extends State<GetPaymentTokenDemo01> {
                       const SizedBox(height: 5),
                       DropdownButton<String>(
                         value: dropdownValue,
+                        items: siteType
+                            .map<DropdownMenuItem<String>>((String value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(value),
+                          );
+                        }).toList(),
                         icon: const Icon(Icons.arrow_drop_down),
                         underline:
                             Container(height: 2, color: Colors.transparent),
@@ -367,10 +368,10 @@ class _GetPaymentTokenDemo01State extends State<GetPaymentTokenDemo01> {
                             color: Colors.red,
                             fontSize: 16,
                             fontWeight: FontWeight.bold),
-                        onChanged: (data) {
+                        onChanged: (newValue) {
                           setState(() {
-                            dropdownValue = data!;
-                            if (data == "DEMO") {
+                            dropdownValue = newValue!;
+                            if (newValue == "DEMO") {
                               endpointURL =
                                   'https://sandbox-pgw.2c2p.com/payment/4.1/paymentToken';
                             } else {
@@ -379,13 +380,7 @@ class _GetPaymentTokenDemo01State extends State<GetPaymentTokenDemo01> {
                             }
                           });
                         },
-                        items: siteType
-                            .map<DropdownMenuItem<String>>((String value) {
-                          return DropdownMenuItem<String>(
-                            value: value,
-                            child: Text(value),
-                          );
-                        }).toList(),
+                        
                       ),
                       Text(endpointURL!,
                           style: const TextStyle(
@@ -592,10 +587,10 @@ class _GetPaymentTokenDemo01State extends State<GetPaymentTokenDemo01> {
   }
 }
 
-class Site {
-  const Site(this.site);
-  final String site;
-}
+// class Site {
+//   const Site(this.site);
+//   final String site;
+// }
 
 class MsgRequest {
   String merchantId;

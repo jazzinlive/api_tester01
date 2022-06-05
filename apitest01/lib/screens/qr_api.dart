@@ -1,7 +1,9 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:typed_data';
 
+import 'package:apitest01/screens/qr_api_qr30.dart';
+import 'package:apitest01/screens/qr_api_qrall.dart';
+import 'package:apitest01/screens/qr_api_qrcs.dart';
 import 'package:dart_jsonwebtoken/dart_jsonwebtoken.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -10,6 +12,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:image_save/image_save.dart';
+import 'package:status_alert/status_alert.dart';
 
 import 'package:apitest01/services/jwt_services.dart';
 
@@ -34,7 +37,7 @@ class _QRPaymentState extends State<QRPayment> {
   String appKey = "l7c41f9a48550344418ef25ccc549dfab1";
   String secretKey = "d58f9def29294c39b552ea19359473ea";
   late String requestMsg1 =
-      '{\n"applicationKey": $appKey,\n"applicationSecret": $secretKey\n}';
+      '{\n"applicationKey": "$appKey",\n"applicationSecret": "$secretKey"\n}';
 
   String bid = "178616548291167";
   String mid = "811434534321023";
@@ -42,14 +45,20 @@ class _QRPaymentState extends State<QRPayment> {
   DateTime now = DateTime.now();
   late String ref1 = DateFormat("yyyyMMddhhmmss").format(now);
   late String inv = DateFormat("yyyyMMddhhmmss").format(now);
-  String description = "item demo1";
-  double amount = 10.00;
-  String currencyCode = "THB";
+  late String description = "item demo1";
+  late double amount = 10.00;
+  String csExtExpiry = "60";
   String frontendReturnURL = "https://developer.scb";
   String backendReturnURL =
       "https://3861159a-13a9-46f3-977f-78d2cd932679.mock.pstmn.io";
   late String requestMsg2 =
-      '{\n  "qrType": "CS",\n  "merchantId": $mid,\n  "terminalId": $tid,\n  "invoice": $inv,\n  "amount": $amount,\n  "csExtExpiryTime" : "60"\n}';
+      '{\n  "qrType": "PP",\n  "ppType": "BILLERID",\n  "ppId": "178616548291167",\n  "amount": "$amount",\n  "ref1": "$ref1",\n  "ref2": "ABC",\n  "ref3": "RRN$ref1"}';
+  late String requestMsgQR30 =
+      '{\n  "qrType": "PP",\n  "ppType": "BILLERID",\n  "ppId": "178616548291167",\n  "amount": "$amount",\n  "ref1": "$ref1",\n  "ref2": "ABC",\n  "ref3": "RRN$ref1"}';
+  late String requestMsgCS =
+      '{\n  "qrType": "CS",\n  "merchantId": "$mid",\n  "terminalId": "$tid",\n  "invoice": "$inv",\n  "amount": "$amount",\n  "csExtExpiryTime" : "$csExtExpiry"\n}';
+  late String requestMsgAll =
+      '{\n  "qrType": "CS",\n  "merchantId": "$mid",\n  "terminalId": "$tid",\n  "invoice": "$inv",\n  "amount": "$amount",\n  "csExtExpiryTime" : "$csExtExpiry"\n}';
 
   String respBackToken =
       "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjYXJkTm8iOiI0MTExMTFYWFhYWFgxMTExIiwiY2FyZFRva2VuIjoiIiwibG95YWx0eVBvaW50cyI6bnVsbCwibWVyY2hhbnRJRCI6IjAxNDAxMDAwMDAwMDAwMyIsImludm9pY2VObyI6IjIwMjIwNDI0MDAwMDUxIiwiYW1vdW50IjoxMDAwLjAsIm1vbnRobHlQYXltZW50IjpudWxsLCJ1c2VyRGVmaW5lZDEiOiIiLCJ1c2VyRGVmaW5lZDIiOiIiLCJ1c2VyRGVmaW5lZDMiOiIiLCJ1c2VyRGVmaW5lZDQiOiIiLCJ1c2VyRGVmaW5lZDUiOiIiLCJjdXJyZW5jeUNvZGUiOiJUSEIiLCJyZWN1cnJpbmdVbmlxdWVJRCI6IiIsInRyYW5SZWYiOiI0ODczMjg0IiwicmVmZXJlbmNlTm8iOiI0NTEzMDI5IiwiYXBwcm92YWxDb2RlIjoiNjgzNTYzIiwiZWNpIjoiMDUiLCJ0cmFuc2FjdGlvbkRhdGVUaW1lIjoiMjAyMjA1MDMxNTQ1MTgiLCJhZ2VudENvZGUiOiJUQkFOSyIsImNoYW5uZWxDb2RlIjoiVkkiLCJpc3N1ZXJDb3VudHJ5IjoiVVMiLCJpc3N1ZXJCYW5rIjoiQkFOSyIsImluc3RhbGxtZW50TWVyY2hhbnRBYnNvcmJSYXRlIjpudWxsLCJjYXJkVHlwZSI6IkNSRURJVCIsImlkZW1wb3RlbmN5SUQiOiIiLCJwYXltZW50U2NoZW1lIjoiVkkiLCJyZXNwQ29kZSI6IjAwMDAiLCJyZXNwRGVzYyI6IlN1Y2Nlc3MifQ.g61cW9XFyzOuO3bV47g7Y2vUoyfQp6qMib6mpjR4oZI";
@@ -57,7 +66,6 @@ class _QRPaymentState extends State<QRPayment> {
   String? qrBase64 = "";
 
   String _result = "";
-  late final Uint8List _data;
 
   final ImagePicker imgPicker = ImagePicker();
   String imagepath = "";
@@ -71,7 +79,8 @@ class _QRPaymentState extends State<QRPayment> {
     bool success = false;
     try {
       success = (await ImageSave.saveImage(
-          base64.decode(context.read<QRModels>().qrPaymentURL), "qrPayment.jpg",
+          base64.decode(context.read<QRModels>().qrPaymentURL),
+          "QR Payment.jpg",
           albumName: "QR Payment"))!;
     } on PlatformException catch (e, s) {
       print(e);
@@ -80,21 +89,38 @@ class _QRPaymentState extends State<QRPayment> {
     setState(() {
       _result = success ? "Save to album success" : "Save to album failed";
     });
+    print(_result);
+    StatusAlert.show(context,
+        duration: const Duration(seconds: 3),
+        title: 'Saved',
+        titleOptions: StatusAlertTextConfiguration(
+            style: const TextStyle(
+                fontFamily: 'SukhumvitSet',
+                fontSize: 25,
+                fontWeight: FontWeight.bold)),
+        subtitle: 'Save to device success',
+        subtitleOptions: StatusAlertTextConfiguration(
+            style: const TextStyle(
+          fontFamily: 'SukhumvitSet',
+          fontSize: 20,
+        )),
+        configuration: const IconConfiguration(icon: Icons.save),
+        backgroundColor: Colors.white.withOpacity(0.8));
   }
 
   Future<String> getAccessToken() async {
     // step 1 : POST request access token
     try {
-      final response = await http.post(
-        Uri.parse(endpointURL1),
-        headers: {
-          'content-type': 'application/json',
-          'requestUId': '85230887-e643-4fa4-84b2-4e56709c4ac4',
-          'resourceOwnerId': appKey
-        },
-        body: jsonEncode(
-            {'applicationKey': appKey, 'applicationSecret': secretKey}),
-      );
+      final response = await http.post(Uri.parse(endpointURL1),
+          headers: {
+            'content-type': 'application/json',
+            'requestUId': '85230887-e643-4fa4-84b2-4e56709c4ac4',
+            'resourceOwnerId': appKey
+          },
+          body: jsonEncode(jsonDecode(context.read<QRModels>().requestMsgQR1))
+          // body: jsonEncode(
+          //     {'applicationKey': appKey, 'applicationSecret': secretKey}),
+          );
       if (response.statusCode == 200) {
         final responseJson = jsonDecode(response.body);
         final responseAccessToken = responseJson['data']['accessToken'];
@@ -138,21 +164,7 @@ class _QRPaymentState extends State<QRPayment> {
           'resourceOwnerId': appKey,
           'authorization': 'Bearer ' + tokenValue
         },
-        body: jsonEncode({
-          'qrType': 'CS',
-          'merchantId': mid,
-          'terminalId': tid,
-          'invoice': inv,
-          'amount': '10.00',
-          'csExtExpiryTime': '60'
-          // 'qrType': 'PP',
-          // 'ppType': 'BILLERID',
-          // 'ppId': '178616548291167',
-          // 'amount': '10.00',
-          // 'ref1': ref1,
-          // 'ref2': 'A',
-          // 'ref3': 'RRN' + ref1,
-        }),
+        body: jsonEncode(jsonDecode(context.read<QRModels>().requestMsgQR2)),
       );
       final responseJson = jsonDecode(response.body);
       if (response.statusCode == 200) {
@@ -165,7 +177,7 @@ class _QRPaymentState extends State<QRPayment> {
         print('QR Base64 Image: $qrImage');
         print('respCode: ${responseJson['status']['code']}');
         print('respDesc: ${responseJson['status']['description']}');
-        
+
         setState(() {
           context.read<QRModels>().qrPaymentURL = qrImage;
           context.read<QRModels>().respCode =
@@ -213,7 +225,9 @@ class _QRPaymentState extends State<QRPayment> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return DefaultTabController(
+      length: 3,
+      child: Scaffold(
         key: _scaffoldKey,
         appBar: AppBar(
           title: const Text('QR Payment'),
@@ -232,6 +246,13 @@ class _QRPaymentState extends State<QRPayment> {
                   ]),
             ),
           ),
+          bottom: const TabBar(
+            tabs: [
+              Tab(icon: Icon(Icons.monetization_on), text: "QR30"),
+              Tab(icon: Icon(Icons.credit_card), text: "QRCS"),
+              Tab(icon: Icon(Icons.qr_code_scanner), text: "QR30 & QRCS"),
+            ],
+          ),
         ),
         body: Container(
           decoration: const BoxDecoration(
@@ -239,376 +260,12 @@ class _QRPaymentState extends State<QRPayment> {
                   image: AssetImage('assets/gbg00.jpg'),
                   fit: BoxFit.cover,
                   colorFilter: ColorFilter.linearToSrgbGamma())),
-          child: SingleChildScrollView(
-            physics: const BouncingScrollPhysics(),
-            child: Form(
-                key: _formKey,
-                child: Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                  child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          "Message Request - Authentication",
-                          style: TextStyle(
-                              fontSize: 18, fontWeight: FontWeight.bold),
-                        ),
-                        const SizedBox(height: 5),
-                        TextFormField(
-                          keyboardType: TextInputType.multiline,
-                          maxLines: 6,
-                          initialValue: requestMsg1,
-                          decoration: const InputDecoration(
-                            border: InputBorder.none,
-                            filled: true,
-                            fillColor: Color.fromARGB(255, 31, 31, 30),
-                            hintText: "Input message request",
-                          ),
-                          style: const TextStyle(
-                              color: Colors.white, fontSize: 15),
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please input request message.';
-                            }
-                            return null;
-                          },
-                          onChanged: (value) {
-                            setState(() {
-                              context.read<QRModels>().requestMsgQR1 = value;
-                            });
-                          },
-                          onSaved: (value) {
-                            context.read<QRModels>().requestMsgQR1 = value;
-                          },
-                        ),
-                        const SizedBox(height: 5),
-                        SizedBox(
-                          width: double.infinity,
-                          height: 35,
-                          child: ElevatedButton(
-                              onPressed: () async {
-                                if (_formKey.currentState!.validate()) {
-                                  _formKey.currentState!.save();
-
-                                  await getAccessToken();
-                                }
-                              },
-                              child: const Text(
-                                "POST Request Access Token",
-                              )),
-                        ),
-                        const SizedBox(height: 10),
-                        const Text(
-                          "Respond Body - Authentication",
-                          style: TextStyle(
-                              fontSize: 18, fontWeight: FontWeight.bold),
-                        ),
-                        const SizedBox(height: 5),
-                        Container(
-                            width: double.infinity,
-                            padding: const EdgeInsets.all(10),
-                            decoration: BoxDecoration(
-                              color: Colors.grey[900],
-                            ),
-                            child: context
-                                            .read<QRModels>()
-                                            .accessToken ==
-                                        null &&
-                                    context.read<QRModels>().respDesc == null
-                                ? const Text(
-                                    '{\n  "status": {\n      "code": <Status Code>,\n      "description": <Status Description>\n  },\n  "data": {\n      "accessToken": <Access Token>,\n      "tokenType": <Token Type>,\n      "expiresIn": <...>,\n      "expiresAt": <...>\n  }\n}',
-                                    style: TextStyle(color: Colors.yellow),
-                                  )
-                                : context.read<QRModels>().respDesc == "Success"
-                                    ? RichText(
-                                        text: TextSpan(
-                                            text:
-                                                '{\n  "accessToken": "${context.read<QRModels>().accessToken}",',
-                                            style: const TextStyle(
-                                                color: Colors.cyanAccent,
-                                                fontFamily: 'SukhumvitSet'),
-                                            children: <TextSpan>[
-                                            TextSpan(
-                                                text:
-                                                    '\n  "tokenType": "${context.read<QRModels>().tokenType}",',
-                                                style: const TextStyle(
-                                                    color: Colors.orangeAccent,
-                                                    fontFamily:
-                                                        'SukhumvitSet')),
-                                            TextSpan(
-                                                text:
-                                                    '\n  "respCode": "${context.read<QRModels>().respCode}",',
-                                                style: TextStyle(
-                                                    color: Colors.purple[200],
-                                                    fontFamily:
-                                                        'SukhumvitSet')),
-                                            TextSpan(
-                                                text:
-                                                    '\n  "respDesc": "${context.read<QRModels>().respDesc}",\n}',
-                                                style: const TextStyle(
-                                                    color:
-                                                        Colors.lightGreenAccent,
-                                                    fontFamily:
-                                                        'SukhumvitSet')),
-                                          ]))
-                                    : context.read<QRModels>().respCode ==
-                                            "9042"
-                                        ? const Text(
-                                            'Invalid hash value.',
-                                            style: TextStyle(color: Colors.red),
-                                          )
-                                        : context.read<QRModels>().respCode ==
-                                                "9007"
-                                            ? const Text(
-                                                'Merchant id is not found.',
-                                                style: TextStyle(
-                                                    color: Colors.red),
-                                              )
-                                            : const Text(
-                                                'Decode not success.',
-                                                style: TextStyle(
-                                                    color: Colors.red),
-                                              )),
-                        const SizedBox(height: 10),
-                        const Divider(),
-                        const Text(
-                          "Message Request - Create QR",
-                          style: TextStyle(
-                              fontSize: 18, fontWeight: FontWeight.bold),
-                        ),
-                        const SizedBox(height: 5),
-                        TextFormField(
-                          keyboardType: TextInputType.multiline,
-                          maxLines: 8,
-                          initialValue: requestMsg2,
-                          decoration: const InputDecoration(
-                            border: InputBorder.none,
-                            filled: true,
-                            fillColor: Color.fromARGB(255, 31, 31, 30),
-                            hintText: "Input message request",
-                          ),
-                          style: const TextStyle(
-                              color: Colors.white, fontSize: 15),
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please input request message.';
-                            }
-                            return null;
-                          },
-                          onChanged: (value) {
-                            setState(() {
-                              context.read<QRModels>().requestMsgQR1 = value;
-                            });
-                          },
-                          onSaved: (value) {
-                            context.read<QRModels>().requestMsgQR1 = value;
-                          },
-                        ),
-                        const SizedBox(height: 5),
-                        SizedBox(
-                          width: double.infinity,
-                          height: 35,
-                          child: ElevatedButton(
-                              onPressed: () async {
-                                await createQR();
-                              },
-                              child: const Text(
-                                "POST Request Create QR Code",
-                              )),
-                        ),
-                        const SizedBox(height: 10),
-                        const Text(
-                          "Response Body - Create QR",
-                          style: TextStyle(
-                              fontSize: 18, fontWeight: FontWeight.bold),
-                        ),
-                        const SizedBox(height: 5),
-                        Container(
-                            width: double.infinity,
-                            padding: const EdgeInsets.all(10),
-                            decoration: BoxDecoration(
-                              color: Colors.grey[900],
-                            ),
-                            child: context.read<QRModels>().respCode == null &&
-                                    context.read<QRModels>().respDesc == null
-                                ? const Text(
-                                    '{\n  "qrImage": "<QR Image from POST request>"\n}',
-                                    style: TextStyle(color: Colors.yellow),
-                                  )
-                                : context.read<QRModels>().qrPaymentURL != null
-                                    ? Column(
-                                        children: [
-                                          RichText(
-                                            text: TextSpan(
-                                                text:
-                                                    '"respCode": "${context.read<QRModels>().respCode}",',
-                                                style: const TextStyle(
-                                                  color: Colors.cyanAccent,
-                                                ),
-                                                children: <TextSpan>[
-                                                  TextSpan(
-                                                      text:
-                                                          '\n"respDesc": "${context.read<QRModels>().respDesc}",',
-                                                      style: const TextStyle(
-                                                          color: Colors
-                                                              .orangeAccent,
-                                                          fontFamily:
-                                                              'SukhumvitSet')),
-                                                  TextSpan(
-                                                    text:
-                                                        '\n"qrImage": "${context.read<QRModels>().qrPaymentURL}"',
-                                                    style: const TextStyle(
-                                                        color: Colors
-                                                            .lightGreenAccent,
-                                                        fontFamily:
-                                                            'SukhumvitSet'),
-                                                  ),
-                                                ]),
-                                            overflow: TextOverflow.ellipsis,
-                                            //maxLines: 5,
-                                          ),
-                                          SizedBox(
-                                            width: MediaQuery.of(context)
-                                                .size
-                                                .width,
-                                            child: Card(
-                                              child: Image.memory(
-                                                base64.decode(context
-                                                    .read<QRModels>()
-                                                    .qrPaymentURL),
-                                                fit: BoxFit.cover,
-                                              ),
-                                            ),
-                                          ),
-                                          ElevatedButton(
-                                            onPressed: _saveImage,
-                                            child: const Text(
-                                                "Click to save to album"),
-                                          ),
-                                        ],
-                                      )
-                                    : context.read<QRModels>().respCode ==
-                                            "9042"
-                                        ? const Text(
-                                            'Invalid hash value.',
-                                            style: TextStyle(color: Colors.red),
-                                          )
-                                        : context.read<QRModels>().respCode ==
-                                                "9007"
-                                            ? const Text(
-                                                'Merchant id is not found.',
-                                                style: TextStyle(
-                                                    color: Colors.red),
-                                              )
-                                            : const Text(
-                                                'Decode not success.',
-                                                style: TextStyle(
-                                                    color: Colors.red),
-                                              )),
-                        const SizedBox(height: 5),
-                        // const Divider(
-                        //   thickness: 1,
-                        // ),
-                        // const Text(
-                        //   "After payment successful",
-                        //   style: TextStyle(
-                        //       fontSize: 18, fontWeight: FontWeight.bold),
-                        // ),
-                        // const Divider(
-                        //   thickness: 1,
-                        // ),
-                        // const SizedBox(height: 10),
-                        // const Text(
-                        //   "Backend Response Token",
-                        //   style: TextStyle(
-                        //       fontSize: 18, fontWeight: FontWeight.bold),
-                        // ),
-                        // const SizedBox(height: 5),
-                        // TextFormField(
-                        //   keyboardType: TextInputType.multiline,
-                        //   maxLines: 10,
-                        //   initialValue: respBackToken,
-                        //   decoration: const InputDecoration(
-                        //     border: InputBorder.none,
-                        //     filled: true,
-                        //     fillColor: Color.fromARGB(255, 244, 245, 198),
-                        //     hintText:
-                        //         "Input response token you get from your server",
-                        //   ),
-                        //   style:
-                        //       TextStyle(color: Colors.red[900], fontSize: 10),
-                        //   validator: (value) {
-                        //     if (value == null || value.isEmpty) {
-                        //       return 'Please input response token.';
-                        //     }
-                        //     return null;
-                        //   },
-                        //   onChanged: (value) {
-                        //     setState(() {
-                        //       context.read<JWTModels>().response = value;
-                        //     });
-                        //   },
-                        //   onSaved: (value) {
-                        //     context.read<JWTModels>().response = value;
-                        //   },
-                        // ),
-                        // const SizedBox(height: 5),
-                        // SizedBox(
-                        //   width: double.infinity,
-                        //   height: 35,
-                        //   child: ElevatedButton(
-                        //       onPressed: () async {
-                        //         if (_formKey.currentState!.validate()) {
-                        //           _formKey.currentState!.save();
-                        //           responseBackend();
-                        //         }
-                        //       },
-                        //       child: const Text(
-                        //         "Decode Response Backend Notification",
-                        //       )),
-                        // ),
-                        // const SizedBox(height: 10),
-                        // Container(
-                        //     width: double.infinity,
-                        //     padding: const EdgeInsets.all(10),
-                        //     decoration: BoxDecoration(
-                        //       color: Colors.grey[900],
-                        //     ),
-                        //     child: Text(
-                        //       context
-                        //           .read<JWTModels>()
-                        //           .decodedPayload
-                        //           .toString(),
-                        //       style: const TextStyle(color: Colors.cyanAccent),
-                        //     )),
-                        const SizedBox(height: 10),
-                      ]),
-                )),
+          child: const TabBarView(
+            children: [
+              QR30Payment(), QRCSPayment(), QRAllPayment()],
           ),
-        ));
+        ),
+      ),
+    );
   }
-}
-
-class Site {
-  const Site(this.site);
-  final String site;
-}
-
-class MsgRequest {
-  String merchantId;
-  String invoiceNo;
-  String description;
-  double amount;
-  String currencyCode;
-
-  MsgRequest(this.merchantId, this.invoiceNo, this.description,
-      this.currencyCode, this.amount);
-  Map<String, dynamic> toJson() => {
-        "merchantID": merchantId,
-        "invoiceNo": invoiceNo,
-        "description": description,
-        "amount": amount,
-        "currencyCode": currencyCode,
-      };
 }
