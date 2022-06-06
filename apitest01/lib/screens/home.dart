@@ -175,6 +175,8 @@ class _MyHomePageState extends State<MyHomePage> {
                             children: <Widget>[
                               Image.asset('assets/scblogo.png', width: 100),
                               const SizedBox(width: 10),
+                              Image.asset('assets/scbez.png', width: 40),
+                              const SizedBox(width: 10),
                               const Text(
                                 'Paywise',
                                 style: TextStyle(fontSize: 16),
@@ -249,6 +251,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       height: 60,
                       child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
+                              padding: EdgeInsets.zero,
                               shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(10)),
                               primary: const Color.fromARGB(255, 52, 2, 92)),
@@ -260,17 +263,34 @@ class _MyHomePageState extends State<MyHomePage> {
                               ),
                             );
                           },
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: <Widget>[
-                              Image.asset('assets/scblogo.png', width: 100),
-                              const SizedBox(width: 10),
-                              const Text(
-                                'LEGO',
-                                style: TextStyle(fontSize: 16),
-                                textAlign: TextAlign.center,
+                          child: Ink(
+                            decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                    begin: Alignment.centerLeft,
+                                    end: Alignment.centerRight,
+                                    colors: [
+                                      Colors.yellow[400]!.withOpacity(0.8),
+                                      Colors.orange.withOpacity(0.8),
+                                      Colors.teal.withOpacity(0.8),
+                                      Colors.purple[900]!.withOpacity(0.8),
+                                    ]),
+                                borderRadius: BorderRadius.circular(10)),
+                            child: SizedBox(
+                              width: double.infinity,
+                              height: double.infinity,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: <Widget>[
+                                  Image.asset('assets/scblogo.png', width: 100),
+                                  const SizedBox(width: 10),
+                                  const Text(
+                                    'LEGO',
+                                    style: TextStyle(fontSize: 16),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ],
                               ),
-                            ],
+                            ),
                           )),
                     ),
                   ],
