@@ -9,6 +9,7 @@ import 'package:provider/provider.dart';
 
 import 'package:apitest01/services/jwt_services.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 import '../models/paywise_models.dart';
 
@@ -51,7 +52,10 @@ class _PaywiseState extends State<Paywise> {
   String respBackToken =
       "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjYXJkTm8iOiI0MTExMTFYWFhYWFgxMTExIiwiY2FyZFRva2VuIjoiIiwibG95YWx0eVBvaW50cyI6bnVsbCwibWVyY2hhbnRJRCI6IjAxNDAxMDAwMDAwMDAwMyIsImludm9pY2VObyI6IjIwMjIwNDI0MDAwMDUxIiwiYW1vdW50IjoxMDAwLjAsIm1vbnRobHlQYXltZW50IjpudWxsLCJ1c2VyRGVmaW5lZDEiOiIiLCJ1c2VyRGVmaW5lZDIiOiIiLCJ1c2VyRGVmaW5lZDMiOiIiLCJ1c2VyRGVmaW5lZDQiOiIiLCJ1c2VyRGVmaW5lZDUiOiIiLCJjdXJyZW5jeUNvZGUiOiJUSEIiLCJyZWN1cnJpbmdVbmlxdWVJRCI6IiIsInRyYW5SZWYiOiI0ODczMjg0IiwicmVmZXJlbmNlTm8iOiI0NTEzMDI5IiwiYXBwcm92YWxDb2RlIjoiNjgzNTYzIiwiZWNpIjoiMDUiLCJ0cmFuc2FjdGlvbkRhdGVUaW1lIjoiMjAyMjA1MDMxNTQ1MTgiLCJhZ2VudENvZGUiOiJUQkFOSyIsImNoYW5uZWxDb2RlIjoiVkkiLCJpc3N1ZXJDb3VudHJ5IjoiVVMiLCJpc3N1ZXJCYW5rIjoiQkFOSyIsImluc3RhbGxtZW50TWVyY2hhbnRBYnNvcmJSYXRlIjpudWxsLCJjYXJkVHlwZSI6IkNSRURJVCIsImlkZW1wb3RlbmN5SUQiOiIiLCJwYXltZW50U2NoZW1lIjoiVkkiLCJyZXNwQ29kZSI6IjAwMDAiLCJyZXNwRGVzYyI6IlN1Y2Nlc3MifQ.g61cW9XFyzOuO3bV47g7Y2vUoyfQp6qMib6mpjR4oZI";
   String? tokenValue;
-  late final Uri _deeplinkUrl = Uri.parse("https://www.scbeasy.com");
+  late final Uri _deeplinkUrl =
+      Uri.parse(context.read<PaywiseModels>().deeplinkUrl);
+  // "https://info.scb.co.th/scbeasy/easy_app_link.html?URI=" +
+  //     context.read<PaywiseModels>().deeplinkUrl);
 
   @override
   void initState() {
@@ -59,9 +63,12 @@ class _PaywiseState extends State<Paywise> {
   }
 
   Future<void> _launchURL() async {
-    await launch(
+    if (await canLaunchUrlString(
       _deeplinkUrl.toString(),
-    );
+    )) {
+      launchUrlString(_deeplinkUrl.toString());
+    }
+
     print("redirect to deeplink");
   }
 
