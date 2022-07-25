@@ -5,7 +5,7 @@ class JWTModels extends ChangeNotifier {
   String? _mid;
   String? _invNo;
   String? _description;
-  double? _amount;
+  double? _amount = 20;
   String? _requestMsg;
   String? _encodedToken;
   String? _requestBody;

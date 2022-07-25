@@ -21,24 +21,26 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.transparent,
-      body: Container(
-        decoration: const BoxDecoration(
-            image: DecorationImage(
-                image: AssetImage('assets/gbg00.jpg'),
-                fit: BoxFit.cover,
-                colorFilter: ColorFilter.linearToSrgbGamma())),
-        child: Center(
-          child: Padding(
-            padding: const EdgeInsets.all(10.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                const Text(
-                  'SCB Payment Gateway',
-                  style: TextStyle(fontSize: 30, fontFamily: 'HWTArtzW00'),
-                ),
-                const Text(
-                  'API Tester',
+        body: Container(
+          decoration: const BoxDecoration(
+              image: DecorationImage(
+                  image: AssetImage('assets/gbg00.jpg'),
+                  fit: BoxFit.cover,
+                  colorFilter: ColorFilter.linearToSrgbGamma())),
+          child: Center(
+            child: SingleChildScrollView(
+              physics: BouncingScrollPhysics(),
+              child: Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    const Text(
+                      'SCB Payment Gateway',
+                      style: TextStyle(fontSize: 30, fontFamily: 'HWTArtzW00'),
+                    ),
+                    const Text(
+                      'API Tester',
                   style: TextStyle(fontSize: 25, fontFamily: 'HWTArtzW00'),
                 ),
                 const Text(
@@ -287,8 +289,9 @@ class _MyHomePageState extends State<MyHomePage> {
               ],
             ),
           ),
-        ),
-      ),
+            ),
+          ),
+        )
       
     );
   }

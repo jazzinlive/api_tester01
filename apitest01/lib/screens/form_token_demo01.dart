@@ -36,22 +36,22 @@ class _FormTokenDemo01State extends State<FormTokenDemo01> {
   String? endpointURL = "https://sandbox-pgw.2c2p.com/payment/4.1/paymentToken";
   String secretKey =
       "7E097B0BEC9E21F61388FF80500A8E0EA926875C55A2C33497636FB1242A06A5";
-  String mid = "014010000000003";
   DateTime now = DateTime.now();
-  late String invNo = DateFormat("yyyyMMddhhmmss").format(now);
-  String description = "item demo1";
-  double amount = 100.00;
+  String mid = "014010000000003";
+  late String invNo = "DM01" + DateFormat("yyyyMMddhhmmss").format(now);
+  String description = "Demo01 item";
+  double? amount;
   String currencyCode = "THB";
-  String frontendReturnURL = "https://www.2c2p.com";
-  String backendReturnURL =
-      "https://3861159a-13a9-46f3-977f-78d2cd932679.mock.pstmn.io";
+  String frontendReturnUrl = "https://flutter.dev/";
+  String backendReturnUrl =
+      "https://16fb0121-3d49-4b81-acbd-3c1329f8f3f0.mock.pstmn.io";
 
   String respBackToken =
       "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjYXJkTm8iOiI0MTExMTFYWFhYWFgxMTExIiwiY2FyZFRva2VuIjoiIiwibG95YWx0eVBvaW50cyI6bnVsbCwibWVyY2hhbnRJRCI6IjAxNDAxMDAwMDAwMDAwMyIsImludm9pY2VObyI6IjIwMjIwNDI0MDAwMDUxIiwiYW1vdW50IjoxMDAwLjAsIm1vbnRobHlQYXltZW50IjpudWxsLCJ1c2VyRGVmaW5lZDEiOiIiLCJ1c2VyRGVmaW5lZDIiOiIiLCJ1c2VyRGVmaW5lZDMiOiIiLCJ1c2VyRGVmaW5lZDQiOiIiLCJ1c2VyRGVmaW5lZDUiOiIiLCJjdXJyZW5jeUNvZGUiOiJUSEIiLCJyZWN1cnJpbmdVbmlxdWVJRCI6IiIsInRyYW5SZWYiOiI0ODczMjg0IiwicmVmZXJlbmNlTm8iOiI0NTEzMDI5IiwiYXBwcm92YWxDb2RlIjoiNjgzNTYzIiwiZWNpIjoiMDUiLCJ0cmFuc2FjdGlvbkRhdGVUaW1lIjoiMjAyMjA1MDMxNTQ1MTgiLCJhZ2VudENvZGUiOiJUQkFOSyIsImNoYW5uZWxDb2RlIjoiVkkiLCJpc3N1ZXJDb3VudHJ5IjoiVVMiLCJpc3N1ZXJCYW5rIjoiQkFOSyIsImluc3RhbGxtZW50TWVyY2hhbnRBYnNvcmJSYXRlIjpudWxsLCJjYXJkVHlwZSI6IkNSRURJVCIsImlkZW1wb3RlbmN5SUQiOiIiLCJwYXltZW50U2NoZW1lIjoiVkkiLCJyZXNwQ29kZSI6IjAwMDAiLCJyZXNwRGVzYyI6IlN1Y2Nlc3MifQ.g61cW9XFyzOuO3bV47g7Y2vUoyfQp6qMib6mpjR4oZI";
   String? tokenValue;
-  
+
   late String? requestMsg =
-      '{\n"merchantID": "${context.read<JWTModels>().mid}",\n"invoiceNo": "${context.read<JWTModels>().invNo}",\n"description": "${context.read<JWTModels>().description}",\n"amount": ${context.read<JWTModels>().amount},\n"currencyCode": "$currencyCode",\n"frontendReturnUrl": "$frontendReturnURL",\n"backendReturnUrl": "$backendReturnURL"\n}';
+      '{\n"merchantID": "${context.read<JWTModels>().mid}",\n"invoiceNo": "${context.read<JWTModels>().invNo}",\n"description": "${context.read<JWTModels>().description}",\n"amount": ${context.read<JWTModels>().amount},\n"currencyCode": "$currencyCode",\n"frontendReturnUrl": "$frontendReturnUrl",\n"backendReturnUrl": "$backendReturnUrl"\n}';
 
   void getDropDownItem() {
     setState(() {
@@ -60,8 +60,13 @@ class _FormTokenDemo01State extends State<FormTokenDemo01> {
   }
 
   Future<String> encodePayloadJWT() async {
+    print("################# Request Msg is prepared #################");
     print("Request Msg Update : $requestMsg");
+
     // step 1 : convert string to json object
+    print(
+        "################# step 1 : convert string requestMsg to json object #################");
+
     Map<String, dynamic> newObj = jsonDecode(requestMsg!);
 
     print("newObj: $newObj");
@@ -72,15 +77,15 @@ class _FormTokenDemo01State extends State<FormTokenDemo01> {
     print("newObj currencyCode: ${newObj['currencyCode']}");
 
     // step 2 : encrypt to JWT
+    print("################# step 2 : encrypt by JWT #################");
     final jwt = JWT(
       newObj,
       issuer: 'https://github.com/jonasroussel/dart_jsonwebtoken',
     );
-
     final token = jwt.sign(SecretKey(context.read<JWTModels>().secretKey));
 
-    print(context.read<JWTModels>().secretKey);
-    print(jwt.payload);
+    print("Secret Key: ${context.read<JWTModels>().secretKey}");
+    print("JWT Payload: ${jwt.payload}");
     print('Signed token: $token\n');
     context.read<JWTModels>().encodedToken = token;
     setState(() {
@@ -88,6 +93,7 @@ class _FormTokenDemo01State extends State<FormTokenDemo01> {
     });
 
     // step 3 : POST API
+    print("################# step 3 : POST API #################");
     try {
       final response = await http.post(
         Uri.parse(endpointURL!),
@@ -102,12 +108,13 @@ class _FormTokenDemo01State extends State<FormTokenDemo01> {
         final responseBodyToken = responseJson['payload'];
 
         print('Status Code: ${response.statusCode}');
-        print('Response: ${response.body}');
-        print('Response: $responseJson');
+        print('Response.body: ${response.body}');
+        print('ResponseJson: $responseJson');
         print('Response Token: $responseBodyToken');
 
         if (responseBodyToken == null) {
-          print(responseJson['respDesc']);
+          print("respCode: ${responseJson['respCode']}");
+          print("respDesc: ${responseJson['respDesc']}");
           setState(() {
             context.read<JWTModels>().respCode = responseJson['respCode'];
             context.read<JWTModels>().respDesc = responseJson['respDesc'];
@@ -115,9 +122,11 @@ class _FormTokenDemo01State extends State<FormTokenDemo01> {
           return "";
         }
         context.read<JWTModels>().decodedToken = responseBodyToken;
-
+        
+        // step 4 : decrypt JWT to json (get webPaymentURL)
+        print(
+            "################# step 4 : decrypt JWT to json (get webPaymentURL) #################");
         try {
-          // step 4 : decrypt JWT to json (get webPaymentURL)
           final jwt = JWT.verify(responseBodyToken,
               SecretKey(context.read<JWTModels>().secretKey));
 
@@ -309,6 +318,12 @@ class _FormTokenDemo01State extends State<FormTokenDemo01> {
   var jwts = JWTServices();
 
   @override
+  void initState() {
+    super.initState();
+  }
+
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
         key: _scaffoldKey,
@@ -354,7 +369,8 @@ class _FormTokenDemo01State extends State<FormTokenDemo01> {
                         const SizedBox(height: 5),
                         TextFormField(
                           keyboardType: TextInputType.multiline,
-                          initialValue: secretKey,
+                          initialValue:
+                              context.read<JWTModels>().secretKey ?? secretKey,
                           maxLines: 2,
                           toolbarOptions: const ToolbarOptions(
                               copy: true,
@@ -404,7 +420,8 @@ class _FormTokenDemo01State extends State<FormTokenDemo01> {
                                 height: 50,
                                 child: TextFormField(
                                   keyboardType: TextInputType.multiline,
-                                  initialValue: mid,
+                                  initialValue:
+                                      context.read<JWTModels>().mid ?? mid,
                                   decoration: const InputDecoration(
                                     border: InputBorder.none,
                                     filled: true,
@@ -443,7 +460,8 @@ class _FormTokenDemo01State extends State<FormTokenDemo01> {
                                 height: 50,
                                 child: TextFormField(
                                   keyboardType: TextInputType.multiline,
-                                  initialValue: invNo,
+                                  initialValue:
+                                      context.read<JWTModels>().invNo ?? invNo,
                                   decoration: const InputDecoration(
                                     border: InputBorder.none,
                                     filled: true,
@@ -482,7 +500,9 @@ class _FormTokenDemo01State extends State<FormTokenDemo01> {
                                 height: 50,
                                 child: TextFormField(
                                   keyboardType: TextInputType.multiline,
-                                  initialValue: description,
+                                  initialValue:
+                                      context.read<JWTModels>().description ??
+                                          description,
                                   decoration: const InputDecoration(
                                     border: InputBorder.none,
                                     filled: true,
@@ -522,7 +542,10 @@ class _FormTokenDemo01State extends State<FormTokenDemo01> {
                                 height: 50,
                                 child: TextFormField(
                                   keyboardType: TextInputType.number,
-                                  initialValue: amount.toString(),
+                                  initialValue: context
+                                      .read<JWTModels>()
+                                      .amount
+                                      .toString(),
                                   decoration: const InputDecoration(
                                     border: InputBorder.none,
                                     filled: true,
@@ -636,71 +659,6 @@ class _FormTokenDemo01State extends State<FormTokenDemo01> {
                             style: const TextStyle(
                                 fontSize: 16, color: Colors.teal)),
                         const SizedBox(height: 20),
-                        const Text(
-                          "Decoded",
-                          style: TextStyle(
-                              fontSize: 18, fontWeight: FontWeight.bold),
-                        ),
-                        const SizedBox(height: 5),
-                        Container(
-                            width: double.infinity,
-                            padding: const EdgeInsets.all(10),
-                            decoration: BoxDecoration(
-                              color: Colors.grey[900],
-                            ),
-                            child: context.read<JWTModels>().decodedToken ==
-                                        null &&
-                                    context.read<JWTModels>().respDesc == null
-                                ? const Text(
-                                    '{  \n"webPaymentURL": "<webPaymentToken>"\n"paymentToken": "<paymentToken>"\n"respCode": "<respCode>"\n"respDesc": "<respDesc>"\n}',
-                                    style: TextStyle(color: Colors.yellow),
-                                  )
-                                : context.read<JWTModels>().respDesc ==
-                                        "Success"
-                                    ? RichText(
-                                        text: TextSpan(
-                                            text:
-                                                '{  \n"webPaymentURL": "${context.read<JWTModels>().webPaymentURL}",',
-                                            style: const TextStyle(
-                                                color: Colors.cyanAccent),
-                                            children: <TextSpan>[
-                                            TextSpan(
-                                                text:
-                                                    '\n"paymentToken": "${context.read<JWTModels>().paymentToken}",',
-                                                style: const TextStyle(
-                                                    color:
-                                                        Colors.orangeAccent)),
-                                            TextSpan(
-                                                text:
-                                                    '\n"respCode": "${context.read<JWTModels>().respCode}",',
-                                                style: TextStyle(
-                                                    color: Colors.purple[200])),
-                                            TextSpan(
-                                                text:
-                                                    '\n"respDesc": "${context.read<JWTModels>().respDesc}",\n}',
-                                                style: const TextStyle(
-                                                    color: Colors
-                                                        .lightGreenAccent)),
-                                          ]))
-                                    : context.read<JWTModels>().respCode ==
-                                            "9042"
-                                        ? const Text(
-                                            'Invalid hash value.',
-                                            style: TextStyle(color: Colors.red),
-                                          )
-                                        : context.read<JWTModels>().respCode ==
-                                                "9007"
-                                            ? const Text(
-                                                'Merchant id is not found.',
-                                                style: TextStyle(
-                                                    color: Colors.red),
-                                              )
-                                            : const Text(
-                                                'Decode not success.',
-                                                style: TextStyle(
-                                                    color: Colors.red),
-                                              )),
-                        const SizedBox(height: 10),
 
                         SizedBox(
                           width: double.infinity,

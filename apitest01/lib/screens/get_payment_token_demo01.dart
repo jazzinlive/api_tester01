@@ -24,9 +24,6 @@ class _GetPaymentTokenDemo01State extends State<GetPaymentTokenDemo01> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   String pasteValue = '';
 
-  // List<Site> sites = <Site>[const Site("DEMO"), const Site("Production")];
-  // late Site selectedSite;
-
   String dropdownValue = "DEMO";
   List<String> siteType = [
     'DEMO',
@@ -36,16 +33,22 @@ class _GetPaymentTokenDemo01State extends State<GetPaymentTokenDemo01> {
   String secretKey =
       "7E097B0BEC9E21F61388FF80500A8E0EA926875C55A2C33497636FB1242A06A5";
   DateTime now = DateTime.now();
+  String mid = "014010000000003";
   late String invNo = DateFormat("yyyyMMddhhmmss").format(now);
+  String description = "Demo01 item";
+  num amount = 50;
+  String currencyCode = "THB";
+  String frontendReturnUrl = "https://flutter.dev/";
+  String backendReturnUrl =
+      "https://16fb0121-3d49-4b81-acbd-3c1329f8f3f0.mock.pstmn.io";
+
   late String requestMsg =
-      '{\n"merchantID": "014010000000003",\n"invoiceNo": "$invNo",\n"description": "Test item demo01",\n"amount": 100.00,\n"currencyCode": "THB",\n"frontendReturnUrl": "https://www.2c2p.com",\n"backendReturnUrl": "https://3861159a-13a9-46f3-977f-78d2cd932679.mock.pstmn.io"\n}';
+      '{\n"merchantID": "$mid",\n"invoiceNo": "DM01$invNo",\n"description": "$description",\n"amount": $amount,\n"currencyCode": "$currencyCode",\n"frontendReturnUrl": "$frontendReturnUrl",\n"backendReturnUrl": "$backendReturnUrl"\n}';
 
   String respBackToken =
       "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjYXJkTm8iOiI0MTExMTFYWFhYWFgxMTExIiwiY2FyZFRva2VuIjoiIiwibG95YWx0eVBvaW50cyI6bnVsbCwibWVyY2hhbnRJRCI6IjAxNDAxMDAwMDAwMDAwMyIsImludm9pY2VObyI6IjIwMjIwNDI0MDAwMDUxIiwiYW1vdW50IjoxMDAwLjAsIm1vbnRobHlQYXltZW50IjpudWxsLCJ1c2VyRGVmaW5lZDEiOiIiLCJ1c2VyRGVmaW5lZDIiOiIiLCJ1c2VyRGVmaW5lZDMiOiIiLCJ1c2VyRGVmaW5lZDQiOiIiLCJ1c2VyRGVmaW5lZDUiOiIiLCJjdXJyZW5jeUNvZGUiOiJUSEIiLCJyZWN1cnJpbmdVbmlxdWVJRCI6IiIsInRyYW5SZWYiOiI0ODczMjg0IiwicmVmZXJlbmNlTm8iOiI0NTEzMDI5IiwiYXBwcm92YWxDb2RlIjoiNjgzNTYzIiwiZWNpIjoiMDUiLCJ0cmFuc2FjdGlvbkRhdGVUaW1lIjoiMjAyMjA1MDMxNTQ1MTgiLCJhZ2VudENvZGUiOiJUQkFOSyIsImNoYW5uZWxDb2RlIjoiVkkiLCJpc3N1ZXJDb3VudHJ5IjoiVVMiLCJpc3N1ZXJCYW5rIjoiQkFOSyIsImluc3RhbGxtZW50TWVyY2hhbnRBYnNvcmJSYXRlIjpudWxsLCJjYXJkVHlwZSI6IkNSRURJVCIsImlkZW1wb3RlbmN5SUQiOiIiLCJwYXltZW50U2NoZW1lIjoiVkkiLCJyZXNwQ29kZSI6IjAwMDAiLCJyZXNwRGVzYyI6IlN1Y2Nlc3MifQ.g61cW9XFyzOuO3bV47g7Y2vUoyfQp6qMib6mpjR4oZI";
   String? tokenValue;
   
-
-
   Future<String> encodePayloadJWT() async {
     // step 1
     Map<String, dynamic> newObj =
