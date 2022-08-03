@@ -31,25 +31,25 @@ class _QR30PaymentState extends State<QR30Payment> {
       "https://api-sandbox.partners.scb/partners/sandbox/v1/oauth/token";
   String endpointURL2 =
       "https://api-sandbox.partners.scb/partners/sandbox/v1/payment/qrcode/create";
-  String appKey = "l7c41f9a48550344418ef25ccc549dfab1";
-  String secretKey = "d58f9def29294c39b552ea19359473ea";
+  String appKey = "l7e1a2064e4210450a9801b08a22ee8d27";
+  String secretKey = "0dad6869015941d7bf689629af65f6c7";
   late String requestMsg1 =
       '{\n"applicationKey": "$appKey",\n"applicationSecret": "$secretKey"\n}';
 
-  String bid = "178616548291167";
-  String mid = "811434534321023";
-  String tid = "119644890500961";
+  String bid = "086655431885412";
+  String mid = "396492940773632";
+  String tid = "950030458883012";
   DateTime now = DateTime.now();
-  late String ref1 = DateFormat("yyyyMMddhhmmss").format(now);
+  late String ref1 = "QR30" + DateFormat("yyyyMMddhhmmss").format(now);
   late String inv = DateFormat("yyyyMMddhhmmss").format(now);
   late String description = "item demo1";
   late double amount = 10.00;
-  String csExtExpiry = "60";
+  String csExtExpiry = "1800";
   String frontendReturnURL = "https://developer.scb";
   String backendReturnURL =
-      "https://3861159a-13a9-46f3-977f-78d2cd932679.mock.pstmn.io";
+      "https://16fb0121-3d49-4b81-acbd-3c1329f8f3f0.mock.pstmn.io";
   late String requestMsg2 =
-      '{\n  "qrType": "PP",\n  "ppType": "BILLERID",\n  "ppId": "178616548291167",\n  "amount": "$amount",\n  "ref1": "$ref1",\n  "ref2": "TESTQR30",\n  "ref3": "RRN$ref1"\n}';
+      '{\n  "qrType": "PP",\n  "ppType": "BILLERID",\n  "ppId": "$bid",\n  "amount": "$amount",\n  "ref1": "$ref1",\n  "ref2": "TESTQR30",\n  "ref3": "RRN"\n}';
 
   String respBackToken =
       "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjYXJkTm8iOiI0MTExMTFYWFhYWFgxMTExIiwiY2FyZFRva2VuIjoiIiwibG95YWx0eVBvaW50cyI6bnVsbCwibWVyY2hhbnRJRCI6IjAxNDAxMDAwMDAwMDAwMyIsImludm9pY2VObyI6IjIwMjIwNDI0MDAwMDUxIiwiYW1vdW50IjoxMDAwLjAsIm1vbnRobHlQYXltZW50IjpudWxsLCJ1c2VyRGVmaW5lZDEiOiIiLCJ1c2VyRGVmaW5lZDIiOiIiLCJ1c2VyRGVmaW5lZDMiOiIiLCJ1c2VyRGVmaW5lZDQiOiIiLCJ1c2VyRGVmaW5lZDUiOiIiLCJjdXJyZW5jeUNvZGUiOiJUSEIiLCJyZWN1cnJpbmdVbmlxdWVJRCI6IiIsInRyYW5SZWYiOiI0ODczMjg0IiwicmVmZXJlbmNlTm8iOiI0NTEzMDI5IiwiYXBwcm92YWxDb2RlIjoiNjgzNTYzIiwiZWNpIjoiMDUiLCJ0cmFuc2FjdGlvbkRhdGVUaW1lIjoiMjAyMjA1MDMxNTQ1MTgiLCJhZ2VudENvZGUiOiJUQkFOSyIsImNoYW5uZWxDb2RlIjoiVkkiLCJpc3N1ZXJDb3VudHJ5IjoiVVMiLCJpc3N1ZXJCYW5rIjoiQkFOSyIsImluc3RhbGxtZW50TWVyY2hhbnRBYnNvcmJSYXRlIjpudWxsLCJjYXJkVHlwZSI6IkNSRURJVCIsImlkZW1wb3RlbmN5SUQiOiIiLCJwYXltZW50U2NoZW1lIjoiVkkiLCJyZXNwQ29kZSI6IjAwMDAiLCJyZXNwRGVzYyI6IlN1Y2Nlc3MifQ.g61cW9XFyzOuO3bV47g7Y2vUoyfQp6qMib6mpjR4oZI";
@@ -130,6 +130,10 @@ class _QR30PaymentState extends State<QR30Payment> {
               responseJson['status']['code'].toString();
           context.read<QRModels>().respDesc =
               responseJson['status']['description'];
+          context.read<QRModels>().expireIn =
+              responseJson['status']['expiresIn'].toString();
+          context.read<QRModels>().expireAt =
+              responseJson['status']['expiresAt'].toString();
         });
         setState(() {
           tokenValue = context.read<QRModels>().accessToken;
@@ -242,7 +246,7 @@ class _QR30PaymentState extends State<QR30Payment> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           const Text(
-                            "Message Request - Authentication",
+                            "Message Request : Get Access Token",
                             style: TextStyle(
                                 fontSize: 18, fontWeight: FontWeight.bold),
                           ),
@@ -292,7 +296,7 @@ class _QR30PaymentState extends State<QR30Payment> {
                           ),
                           const SizedBox(height: 10),
                           const Text(
-                            "Respond Body - Authentication",
+                            "Respond Body : Get Access Token",
                             style: TextStyle(
                                 fontSize: 18, fontWeight: FontWeight.bold),
                           ),
@@ -315,14 +319,14 @@ class _QR30PaymentState extends State<QR30Payment> {
                                       ? RichText(
                                           text: TextSpan(
                                               text:
-                                                  '{\n  "accessToken": "${context.read<QRModels>().accessToken}",',
+                                                  '{\n  "status": {\n      "code": ${context.read<QRModels>().respCode},\n      "description": "${context.read<QRModels>().respDesc}"\n  },\n}{\n  "accessToken": "${context.read<QRModels>().accessToken}",',
                                               style: const TextStyle(
                                                   color: Colors.cyanAccent,
                                                   fontFamily: 'SukhumvitSet'),
                                               children: <TextSpan>[
                                               TextSpan(
                                                   text:
-                                                      '\n  "tokenType": "${context.read<QRModels>().tokenType}",',
+                                                      '\n  "data": {\n      "accessToken": "${context.read<QRModels>().accessToken}",',
                                                   style: const TextStyle(
                                                       color:
                                                           Colors.orangeAccent,
@@ -330,14 +334,22 @@ class _QR30PaymentState extends State<QR30Payment> {
                                                           'SukhumvitSet')),
                                               TextSpan(
                                                   text:
-                                                      '\n  "respCode": "${context.read<QRModels>().respCode}",',
+                                                      '\n      "tokenType": "${context.read<QRModels>().tokenType}",',
                                                   style: TextStyle(
                                                       color: Colors.purple[200],
                                                       fontFamily:
                                                           'SukhumvitSet')),
                                               TextSpan(
                                                   text:
-                                                      '\n  "respDesc": "${context.read<QRModels>().respDesc}",\n}',
+                                                      '\n      "expiresIn": ${context.read<QRModels>().expireIn},',
+                                                  style: const TextStyle(
+                                                      color: Colors
+                                                          .lightGreenAccent,
+                                                      fontFamily:
+                                                          'SukhumvitSet')),
+                                              TextSpan(
+                                                  text:
+                                                      '\n      "expiresAt": ${context.read<QRModels>().expireAt}\n  }',
                                                   style: const TextStyle(
                                                       color: Colors
                                                           .lightGreenAccent,

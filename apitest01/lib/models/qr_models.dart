@@ -21,6 +21,8 @@ class QRModels extends ChangeNotifier {
   String? _paymentToken;
   String? _respCode;
   String? _respDesc;
+  String? _expireIn;
+  String? _expireAt;
   List<QRAPIlog>? _logList = [];
 
   get appKey => _appKey;
@@ -143,6 +145,18 @@ class QRModels extends ChangeNotifier {
     notifyListeners();
   }
 
+  get expireIn => _expireIn;
+  set expireIn(value) {
+    _expireIn = value;
+    notifyListeners();
+  }
+
+  get expireAt => _expireAt;
+  set expireAt(value) {
+    _expireAt = value;
+    notifyListeners();
+  }
+
   List<dynamic>? get qrLog => _logList;
   set logList(List<dynamic>? value) {
     _logList = value as List<QRAPIlog>;
@@ -176,7 +190,9 @@ class QRAPIlog {
       this.qrPaymentURL,
       this.paymentToken,
       this.respCode,
-      this.respDesc});
+      this.respDesc,
+      this.expireIn,
+      this.expireAt});
   String? appKey;
   String? secretKey;
   String? mid;
@@ -197,4 +213,6 @@ class QRAPIlog {
   String? paymentToken;
   String? respCode;
   String? respDesc;
+  String? expireIn;
+  String? expireAt;
 }

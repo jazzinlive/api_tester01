@@ -29,23 +29,23 @@ class _PaywiseState extends State<Paywise> {
       "https://api-sandbox.partners.scb/partners/sandbox/v1/oauth/token";
   String endpointURL2 =
       "https://api-sandbox.partners.scb/partners/sandbox/v3/deeplink/transactions";
-  String appKey = "l7c41f9a48550344418ef25ccc549dfab1";
-  String secretKey = "d58f9def29294c39b552ea19359473ea";
+  String appKey = "l7e1a2064e4210450a9801b08a22ee8d27";
+  String secretKey = "0dad6869015941d7bf689629af65f6c7";
   late String requestMsg1 =
       '{\n"applicationKey": "$appKey",\n"applicationSecret": "$secretKey"\n}';
 
-  String bid = "178616548291167";
-  String mid = "811434534321023";
-  String tid = "119644890500961";
+  String bid = "086655431885412";
+  String mid = "396492940773632";
+  String tid = "950030458883012";
   DateTime now = DateTime.now();
   late String ref1 = DateFormat("yyyyMMddhhmmss").format(now);
   late String inv = DateFormat("yyyyMMddhhmmss").format(now);
   late String description = "item demo1";
   late double amount = 10.00;
-  String csExtExpiry = "60";
+  String csExtExpiry = "1800";
   String frontendReturnURL = "https://developer.scb";
   String backendReturnURL =
-      "https://3861159a-13a9-46f3-977f-78d2cd932679.mock.pstmn.io";
+      "https://16fb0121-3d49-4b81-acbd-3c1329f8f3f0.mock.pstmn.io";
   late String requestMsg2 =
       '{\n  "transactionType": "PURCHASE",\n  "transactionSubType": ["BP", "CCFA", "CCIPP"],\n  "sessionValidityPeriod": 1800,\n  "billPayment": {\n    "paymentAmount": $amount,\n    "accountTo": "$bid",\n    "ref1": "$ref1",\n    "ref2": "TESTPWBP",\n    "ref3": "RRN$ref1"\n  },\n  "creditCardFullAmount": {\n    "merchantId": "$mid",\n    "terminalId": "$tid",\n    "orderReference": "$inv",\n    "paymentAmount": $amount\n  },\n  "installmentPaymentPlan": {\n    "merchantId": "$mid",\n    "terminalId": "$tid",\n    "orderReference": "IPP$inv",\n    "paymentAmount": $amount,\n    "tenor": "12",\n    "ippType": "3",\n    "prodCode": "1001"\n  },\n  "merchantMetaData": {\n    "callbackUrl": "$backendReturnURL",\n    "merchantInfo": {\n      "name": "API Tester"\n    }\n  }\n}';
 

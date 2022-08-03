@@ -24,9 +24,6 @@ class _GetPaymentTokenDemo02State extends State<GetPaymentTokenDemo02> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   String pasteValue = '';
 
-  List<Site> sites = <Site>[const Site("DEMO"), const Site("Production")];
-  late Site selectedSite;
-
   String dropdownValue = "DEMO";
   String holder = "";
   List<String> siteType = [
@@ -61,23 +58,32 @@ class _GetPaymentTokenDemo02State extends State<GetPaymentTokenDemo02> {
   }
 
   Future<String> encodePayloadJWT() async {
-    // step 1
+    print("################# Request Msg is prepared #################");
+    print("Request Msg Update : $requestMsg");
+
+    // step 1 : convert string to json object
+    print(
+        "################# step 1 : convert string requestMsg to json object #################");
+
     Map<String, dynamic> newObj =
         jsonDecode(context.read<JWTModels>().requestMsg);
-    print(newObj);
+    print("newObj: $newObj");
+    print("newObj mid: ${newObj['merchantID']}");
+    print("newObj invNo: ${newObj['invoiceNo']}");
+    print("newObj description: ${newObj['description']}");
+    print("newObj amount: ${newObj['amount']}");
+    print("newObj currencyCode: ${newObj['currencyCode']}");
 
-    // msgRequest = MsgRequest(newObj['merchantID'], newObj['invoiceNo'],
-    //     newObj['description'], newObj['currencyCode'], newObj['amount']);
+    // step 2 : encrypt to JWT
+    print("################# step 2 : encrypt by JWT #################");
     final jwt = JWT(
       newObj,
       issuer: 'https://github.com/jonasroussel/dart_jsonwebtoken',
     );
-
     final token = jwt.sign(SecretKey(context.read<JWTModels>().secretKey));
 
-    print(context.read<JWTModels>().secretKey);
-    //print(msgRequest.toJson());
-    print(jwt.payload);
+    print("Secret Key: ${context.read<JWTModels>().secretKey}");
+    print("JWT Payload: ${jwt.payload}");
     print('Signed token: $token\n');
     context.read<JWTModels>().encodedToken = token;
     setState(() {
@@ -88,7 +94,8 @@ class _GetPaymentTokenDemo02State extends State<GetPaymentTokenDemo02> {
   }
 
   Future<String> requestPaymentToken(String token) async {
-    // step 3
+    // step 3 : POST API
+    print("################# step 3 : POST API #################");
     try {
       final response = await http.post(
         Uri.parse(endpointURL!),
@@ -99,40 +106,29 @@ class _GetPaymentTokenDemo02State extends State<GetPaymentTokenDemo02> {
       );
 
       if (response.statusCode == 200) {
-        // step 4
         final responseJson = convert.jsonDecode(response.body);
         final responseBody = responseJson['payload'];
 
-        print('Response: ${response.body}');
         print('Status Code: ${response.statusCode}');
+        print('Response.body: ${response.body}');
+        print('ResponseJson: $responseJson');
         print('Response Token: $responseBody');
 
         if (responseBody == null) {
-          print(responseJson['respDesc']);
+          print("respCode: ${responseJson['respCode']}");
+          print("respDesc: ${responseJson['respDesc']}");
           setState(() {
             context.read<JWTModels>().respCode = responseJson['respCode'];
             context.read<JWTModels>().respDesc = responseJson['respDesc'];
           });
-
-          // final snackBar = SnackBar(
-          //   content: Text(responseJson['respDesc']),
-          //   duration: const Duration(seconds: 10),
-          //   action: SnackBarAction(
-          //     label: 'Close',
-          //     onPressed: () {
-          //       // Some code to undo the change.
-          //       Navigator.pop(context);
-          //     },
-          //   ),
-          // );
-          // ignore: deprecated_member_use
-          //_scaffoldKey.currentState!.showSnackBar(snackBar);
           return "";
         }
         context.read<JWTModels>().decodedToken = responseBody;
 
+        // step 4 : decrypt JWT to json (get webPaymentURL)
+        print(
+            "################# step 4 : decrypt JWT to json (get webPaymentURL) #################");
         try {
-          // JWT Decode
           final jwt = JWT.verify(
               responseBody, SecretKey(context.read<JWTModels>().secretKey));
 
@@ -185,6 +181,36 @@ class _GetPaymentTokenDemo02State extends State<GetPaymentTokenDemo02> {
     }
 
     return "1";
+  }
+
+  void getBackendResponse() async {
+    final backendRequestBody = await http.get(
+      Uri.parse(
+          "https://api.getpostman.com/mocks/16fb0121-3d49-4b81-acbd-3c1329f8f3f0/call-logs?include=request.body"),
+      headers: {
+        'x-api-key':
+            'PMAK-62dfafce3229e402dcf15c55-8e54fdf9df7bf4ff8a9db8d03878772c6c'
+      },
+    );
+
+    if (backendRequestBody.statusCode == 200) {
+      final responseJson = convert.jsonDecode(backendRequestBody.body);
+      final responseBodyToken = responseJson['payload'];
+
+      print('Status Code: ${backendRequestBody.statusCode}');
+      print('Response: ${backendRequestBody.body}');
+      print('Response: $responseJson');
+      print('Response Token: $responseBodyToken');
+
+      if (responseBodyToken == null) {
+        print(responseJson['respDesc']);
+        setState(() {
+          context.read<JWTModels>().respCode = responseJson['respCode'];
+          context.read<JWTModels>().respDesc = responseJson['respDesc'];
+        });
+        return;
+      }
+    }
   }
 
   void responseBackend() async {
@@ -453,13 +479,12 @@ class _GetPaymentTokenDemo02State extends State<GetPaymentTokenDemo02> {
                                           .decodedToken ==
                                       null &&
                                   context.read<JWTModels>().respDesc == null
-                              ? const Text(
+                              ? const SelectableText(
                                   '{  \n"webPaymentURL": "<webPaymentToken>"\n"paymentToken": "<paymentToken>"\n"respCode": "<respCode>"\n"respDesc": "<respDesc>"\n}',
                                   style: TextStyle(color: Colors.yellow),
                                 )
                               : context.read<JWTModels>().respDesc == "Success"
-                                  ? RichText(
-                                      text: TextSpan(
+                                  ? SelectableText.rich(TextSpan(
                                           text:
                                               '{  \n"webPaymentURL": "${context.read<JWTModels>().webPaymentURL}",',
                                           style: const TextStyle(
@@ -530,44 +555,41 @@ class _GetPaymentTokenDemo02State extends State<GetPaymentTokenDemo02> {
                         style: TextStyle(
                             fontSize: 18, fontWeight: FontWeight.bold),
                       ),
+                      SizedBox(
+                        width: double.infinity,
+                        height: 35,
+                        child: ElevatedButton(
+                            onPressed: () async {
+                              setState(() {
+                                getBackendResponse();
+                              });
+                            },
+                            child: const Text(
+                              "Get Backend Return Token",
+                            )),
+                      ),
                       const Divider(
                         thickness: 1,
                       ),
-                      const SizedBox(height: 10),
+                      
                       const Text(
-                        "Backend Response Token",
+                        "Backend Return Token",
                         style: TextStyle(
                             fontSize: 18, fontWeight: FontWeight.bold),
                       ),
                       const SizedBox(height: 5),
-                      TextFormField(
-                        keyboardType: TextInputType.multiline,
-                        maxLines: 10,
-                        initialValue: respBackToken,
-                        decoration: const InputDecoration(
-                          border: InputBorder.none,
-                          filled: true,
-                          fillColor: Color.fromARGB(255, 244, 245, 198),
-                          hintText:
-                              "Input response token you get from your server",
-                        ),
-                        style: TextStyle(color: Colors.red[900], fontSize: 10),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please input response token.';
-                          }
-                          return null;
-                        },
-                        onChanged: (value) {
-                          setState(() {
-                            context.read<JWTModels>().response = value;
-                          });
-                        },
-                        onSaved: (value) {
-                          context.read<JWTModels>().response = value;
-                        },
-                      ),
-                      const SizedBox(height: 5),
+                      Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                            color: Colors.grey[900],
+                          ),
+                          child: SelectableText(
+                            context.read<JWTModels>().response,
+                            style: const TextStyle(
+                                color: Colors.yellow, fontSize: 10),
+                          )),
+                      const SizedBox(height: 10),
                       SizedBox(
                         width: double.infinity,
                         height: 35,
@@ -589,7 +611,7 @@ class _GetPaymentTokenDemo02State extends State<GetPaymentTokenDemo02> {
                           decoration: BoxDecoration(
                             color: Colors.grey[900],
                           ),
-                          child: Text(
+                          child: SelectableText(
                             context.read<JWTModels>().decodedPayload.toString(),
                             style: const TextStyle(color: Colors.cyanAccent),
                           )),
@@ -600,25 +622,3 @@ class _GetPaymentTokenDemo02State extends State<GetPaymentTokenDemo02> {
   }
 }
 
-class Site {
-  const Site(this.site);
-  final String site;
-}
-
-class MsgRequest {
-  String merchantId;
-  String invoiceNo;
-  String description;
-  double amount;
-  String currencyCode;
-
-  MsgRequest(this.merchantId, this.invoiceNo, this.description,
-      this.currencyCode, this.amount);
-  Map<String, dynamic> toJson() => {
-        "merchantID": merchantId,
-        "invoiceNo": invoiceNo,
-        "description": description,
-        "amount": amount,
-        "currencyCode": currencyCode,
-      };
-}

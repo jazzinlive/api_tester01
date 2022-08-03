@@ -31,23 +31,23 @@ class _QRCSPaymentState extends State<QRCSPayment> {
       "https://api-sandbox.partners.scb/partners/sandbox/v1/oauth/token";
   String endpointURL2 =
       "https://api-sandbox.partners.scb/partners/sandbox/v1/payment/qrcode/create";
-  String appKey = "l7c41f9a48550344418ef25ccc549dfab1";
-  String secretKey = "d58f9def29294c39b552ea19359473ea";
+  String appKey = "l7e1a2064e4210450a9801b08a22ee8d27";
+  String secretKey = "0dad6869015941d7bf689629af65f6c7";
   late String requestMsg1 =
       '{\n"applicationKey": "$appKey",\n"applicationSecret": "$secretKey"\n}';
 
-  String bid = "178616548291167";
-  String mid = "811434534321023";
-  String tid = "119644890500961";
+  String bid = "086655431885412";
+  String mid = "396492940773632";
+  String tid = "950030458883012";
   DateTime now = DateTime.now();
-  late String ref1 = DateFormat("yyyyMMddhhmmss").format(now);
+  late String ref1 = "QRCS" + DateFormat("yyyyMMddhhmmss").format(now);
   late String inv = DateFormat("yyyyMMddhhmmss").format(now);
   late String description = "item demo1";
   late double amount = 10.00;
-  String csExtExpiry = "60";
+  String csExtExpiry = "1800";
   String frontendReturnURL = "https://developer.scb";
   String backendReturnURL =
-      "https://3861159a-13a9-46f3-977f-78d2cd932679.mock.pstmn.io";
+      "https://16fb0121-3d49-4b81-acbd-3c1329f8f3f0.mock.pstmn.io";
   late String requestMsg2 =
       '{\n  "qrType": "CS",\n  "merchantId": "$mid",\n  "terminalId": "$tid",\n  "invoice": "QRCS$inv",\n  "amount": "$amount",\n  "csExtExpiryTime" : "$csExtExpiry"\n}';
 
@@ -130,6 +130,10 @@ class _QRCSPaymentState extends State<QRCSPayment> {
               responseJson['status']['code'].toString();
           context.read<QRModels>().respDesc =
               responseJson['status']['description'];
+          context.read<QRModels>().expireIn =
+              responseJson['status']['expiresIn'].toString();
+          context.read<QRModels>().expireAt =
+              responseJson['status']['expiresAt'].toString();
         });
         setState(() {
           tokenValue = context.read<QRModels>().accessToken;
