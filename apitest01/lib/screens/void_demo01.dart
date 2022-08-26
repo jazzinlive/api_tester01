@@ -1,25 +1,30 @@
-import 'dart:convert';
+import 'dart:async';
+import 'dart:convert' as convert;
+import 'dart:io';
+
+import 'package:dart_jsonwebtoken/dart_jsonwebtoken.dart';
+import 'package:encrypt/encrypt.dart';
+import 'package:encrypt/encrypt_io.dart';
+import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
+import 'package:jose/jose.dart';
+import 'package:pointycastle/asymmetric/api.dart';
+import 'package:provider/provider.dart';
+import 'package:x509/x509.dart';
 
 import 'package:apitest01/models/jwt_models.dart';
 import 'package:apitest01/screens/redirect_payment.dart';
 import 'package:apitest01/services/jwt_services.dart';
-import 'package:flutter/material.dart';
-import 'package:dart_jsonwebtoken/dart_jsonwebtoken.dart';
-import 'package:http/http.dart' as http;
-import 'package:intl/intl.dart';
-import 'dart:async';
-import 'dart:convert' as convert;
 
-import 'package:provider/provider.dart';
-
-class GetPaymentTokenDemo01 extends StatefulWidget {
-  const GetPaymentTokenDemo01({Key? key}) : super(key: key);
+class VoidDemo01 extends StatefulWidget {
+  // const VoidDemo01({Key? key}) : super(key: key);
 
   @override
-  State<GetPaymentTokenDemo01> createState() => _GetPaymentTokenDemo01State();
+  State<VoidDemo01> createState() => _VoidDemo01State();
 }
 
-class _GetPaymentTokenDemo01State extends State<GetPaymentTokenDemo01> {
+class _VoidDemo01State extends State<VoidDemo01> {
   final _formKey = GlobalKey<FormState>();
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   String pasteValue = '';
@@ -29,25 +34,34 @@ class _GetPaymentTokenDemo01State extends State<GetPaymentTokenDemo01> {
     'DEMO',
     'Production',
   ];
-  String? endpointURL = "https://sandbox-pgw.2c2p.com/payment/4.1/paymentToken";
+  String? endpointURL =
+      "https://demo2.2c2p.com/2C2PFrontend/PaymentAction/2.0/action";
   String secretKey =
       "7E097B0BEC9E21F61388FF80500A8E0EA926875C55A2C33497636FB1242A06A5";
   DateTime now = DateTime.now();
   String mid = "014010000000003";
-  late String invNo = DateFormat("yyyyMMddhhmmss").format(now);
+  late String invNo = "DM0120220804025942";
   String description = "Demo01 item";
-  num amount = 50;
+  num amount = 100;
   String currencyCode = "THB";
   String frontendReturnUrl = "https://flutter.dev/";
   String backendReturnUrl =
       "https://16fb0121-3d49-4b81-acbd-3c1329f8f3f0.mock.pstmn.io";
 
   late String requestMsg =
-      '{\n"merchantID": "$mid",\n"invoiceNo": "DM01$invNo",\n"description": "$description",\n"amount": $amount,\n"currencyCode": "$currencyCode",\n"frontendReturnUrl": "$frontendReturnUrl",\n"backendReturnUrl": "$backendReturnUrl"\n}';
+      '<PaymentProcessRequest>\n  <version>3.8</version>\n  <merchantID>$mid</merchantID>\n  <invoiceNo>$invNo</invoiceNo>\n  <actionAmount>$amount</actionAmount>\n  <processType>V</processType>\n</PaymentProcessRequest>';
 
   String respBackToken =
       "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjYXJkTm8iOiI0MTExMTFYWFhYWFgxMTExIiwiY2FyZFRva2VuIjoiIiwibG95YWx0eVBvaW50cyI6bnVsbCwibWVyY2hhbnRJRCI6IjAxNDAxMDAwMDAwMDAwMyIsImludm9pY2VObyI6IjIwMjIwNDI0MDAwMDUxIiwiYW1vdW50IjoxMDAwLjAsIm1vbnRobHlQYXltZW50IjpudWxsLCJ1c2VyRGVmaW5lZDEiOiIiLCJ1c2VyRGVmaW5lZDIiOiIiLCJ1c2VyRGVmaW5lZDMiOiIiLCJ1c2VyRGVmaW5lZDQiOiIiLCJ1c2VyRGVmaW5lZDUiOiIiLCJjdXJyZW5jeUNvZGUiOiJUSEIiLCJyZWN1cnJpbmdVbmlxdWVJRCI6IiIsInRyYW5SZWYiOiI0ODczMjg0IiwicmVmZXJlbmNlTm8iOiI0NTEzMDI5IiwiYXBwcm92YWxDb2RlIjoiNjgzNTYzIiwiZWNpIjoiMDUiLCJ0cmFuc2FjdGlvbkRhdGVUaW1lIjoiMjAyMjA1MDMxNTQ1MTgiLCJhZ2VudENvZGUiOiJUQkFOSyIsImNoYW5uZWxDb2RlIjoiVkkiLCJpc3N1ZXJDb3VudHJ5IjoiVVMiLCJpc3N1ZXJCYW5rIjoiQkFOSyIsImluc3RhbGxtZW50TWVyY2hhbnRBYnNvcmJSYXRlIjpudWxsLCJjYXJkVHlwZSI6IkNSRURJVCIsImlkZW1wb3RlbmN5SUQiOiIiLCJwYXltZW50U2NoZW1lIjoiVkkiLCJyZXNwQ29kZSI6IjAwMDAiLCJyZXNwRGVzYyI6IlN1Y2Nlc3MifQ.g61cW9XFyzOuO3bV47g7Y2vUoyfQp6qMib6mpjR4oZI";
   String? tokenValue;
+
+  void encodeRequestJWE() async {
+    final jwt = JWT(
+      requestMsg,
+      issuer: 'https://github.com/jonasroussel/dart_jsonwebtoken',
+    );
+    //var jweRequest = jwt.sign(JsonWebAlgorithm.rsa_oaep)
+  }
 
   Future<String> encodePayloadJWT() async {
     print("################# Request Msg is prepared #################");
@@ -58,7 +72,7 @@ class _GetPaymentTokenDemo01State extends State<GetPaymentTokenDemo01> {
         "################# step 1 : convert string requestMsg to json object #################");
 
     Map<String, dynamic> newObj =
-        jsonDecode(context.read<JWTModels>().requestMsg);
+        convert.jsonDecode(context.read<JWTModels>().requestMsg);
     print("newObj: $newObj");
     print("newObj mid: ${newObj['merchantID']}");
     print("newObj invNo: ${newObj['invoiceNo']}");
@@ -92,7 +106,7 @@ class _GetPaymentTokenDemo01State extends State<GetPaymentTokenDemo01> {
       final response = await http.post(
         Uri.parse(endpointURL!),
         headers: {'content-type': 'application/json'},
-        body: jsonEncode({
+        body: convert.jsonEncode({
           'payload': token,
         }),
       );
@@ -322,7 +336,7 @@ class _GetPaymentTokenDemo01State extends State<GetPaymentTokenDemo01> {
                             onPressed: () async {
                               if (_formKey.currentState!.validate()) {
                                 _formKey.currentState!.save();
-                                await encodePayloadJWT();
+                                encodeRequestJWE();
                               }
                             },
                             child: const Text(
@@ -477,11 +491,11 @@ class _GetPaymentTokenDemo01State extends State<GetPaymentTokenDemo01> {
                                 )
                               : context.read<JWTModels>().respDesc == "Success"
                                   ? SelectableText.rich(TextSpan(
-                                          text:
-                                              '{  \n"webPaymentURL": "${context.read<JWTModels>().webPaymentURL}",',
-                                          style: const TextStyle(
-                                              color: Colors.cyanAccent),
-                                          children: <TextSpan>[
+                                      text:
+                                          '{  \n"webPaymentURL": "${context.read<JWTModels>().webPaymentURL}",',
+                                      style: const TextStyle(
+                                          color: Colors.cyanAccent),
+                                      children: <TextSpan>[
                                           TextSpan(
                                               text:
                                                   '\n"paymentToken": "${context.read<JWTModels>().paymentToken}",',
@@ -563,7 +577,6 @@ class _GetPaymentTokenDemo01State extends State<GetPaymentTokenDemo01> {
                       const Divider(
                         thickness: 1,
                       ),
-                      
                       const Text(
                         "Backend Return Token",
                         style: TextStyle(

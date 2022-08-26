@@ -585,7 +585,8 @@ class _GetPaymentTokenDemo02State extends State<GetPaymentTokenDemo02> {
                             color: Colors.grey[900],
                           ),
                           child: SelectableText(
-                            context.read<JWTModels>().response,
+                            context.read<JWTModels>().response ??
+                                "No Backend Token",
                             style: const TextStyle(
                                 color: Colors.yellow, fontSize: 10),
                           )),

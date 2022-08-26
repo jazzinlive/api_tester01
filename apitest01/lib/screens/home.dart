@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:apitest01/screens/get_payment_token.dart';
 import 'package:apitest01/screens/paywise.dart';
 import 'package:apitest01/screens/qr_api.dart';
+import 'package:apitest01/screens/voidAPI.dart';
 import 'package:flutter/material.dart';
 
 import 'form_token_demo01.dart';
@@ -94,6 +95,38 @@ class _MyHomePageState extends State<MyHomePage> {
                         Navigator.of(context).push(
                           MaterialPageRoute(
                             builder: (BuildContext context) =>
+                                    const VoidAPI(),
+                              ),
+                            );
+                          },
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              Image.asset('assets/2c2plogo.png', width: 80),
+                              const SizedBox(width: 10),
+                              const Text(
+                                'Void API',
+                                style: TextStyle(fontSize: 16),
+                                textAlign: TextAlign.center,
+                              ),
+                            ],
+                          )),
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    SizedBox(
+                      width: double.infinity,
+                      height: 60,
+                      child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10)),
+                              primary: const Color.fromARGB(255, 6, 73, 77)),
+                          onPressed: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (BuildContext context) =>
                                 const FormTokenDemo01(),
                           ),
                         );

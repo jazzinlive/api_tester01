@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'dart:async';
 
@@ -16,6 +17,13 @@ class WebViewStack extends StatefulWidget {
 
 class _WebViewStackState extends State<WebViewStack> {
   var loadingPercentage = 0;
+  _launchURL(url) async {
+    if (await canLaunchUrl(Uri.parse(url))) {
+      await launchUrl(Uri.parse(url));
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -41,20 +49,15 @@ class _WebViewStackState extends State<WebViewStack> {
               loadingPercentage = 100;
             });
           },
-          navigationDelegate: (navigation) {
-            final host = Uri.parse(navigation.url).host;
-            if (host.contains('youtube.com')) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(
-                    'Blocking navigation to $host',
-                  ),
-                ),
-              );
+          navigationDelegate: (NavigationRequest request) {
+            if (request.url.contains("line:")) {
+              _launchURL(request.url);
               return NavigationDecision.prevent;
+          
             }
             return NavigationDecision.navigate;
           },
+          
           javascriptMode: JavascriptMode.unrestricted,
           javascriptChannels: _createJavascriptChannels(context),
         ),

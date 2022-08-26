@@ -8,7 +8,6 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 import 'package:apitest01/services/jwt_services.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 import '../models/paywise_models.dart';
@@ -64,9 +63,15 @@ class _PaywiseState extends State<Paywise> {
 
   Future<void> _launchURL() async {
     if (await canLaunchUrlString(
-      _deeplinkUrl.toString(),
+        //"line://pay/payment/ek03TTYyQjJabDZnN3dDSXdKY1VzS1hVeHNCMGhmOVYyeXRNc2VjZEVJd2trdFVkQmlhaUQrbTRHMjQ4d09jaw"
+        "https://line.me/R/pay/payment/ek03TTYyQjJabDZnN3dDSXdKY1VzS1hVeHNCMGhmOVYyeXRNc2VjZEVJd2trdFVkQmlhaUQrbTRHMjQ4d09jaw"
+        //_deeplinkUrl.toString(),
     )) {
-      launchUrlString(_deeplinkUrl.toString());
+      launchUrlString(
+          //"line://pay/payment/ek03TTYyQjJabDZnN3dDSXdKY1VzS1hVeHNCMGhmOVYyeXRNc2VjZEVJd2trdFVkQmlhaUQrbTRHMjQ4d09jaw"
+          "https://line.me/R/pay/payment/ek03TTYyQjJabDZnN3dDSXdKY1VzS1hVeHNCMGhmOVYyeXRNc2VjZEVJd2trdFVkQmlhaUQrbTRHMjQ4d09jaw"
+          //_deeplinkUrl.toString()
+          );
     }
 
     print("redirect to deeplink");

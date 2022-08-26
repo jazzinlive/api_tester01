@@ -50,6 +50,9 @@ dependencies:
   image_picker: ^0.8.5+3
   image_save: ^5.0.0
   status_alert: ^1.0.0
+  encrypt: ^5.0.1
+  x509: ^0.2.2
+  jose: ^0.3.2
   
 
 dev_dependencies:

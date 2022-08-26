@@ -6,44 +6,45 @@ import 'package:apitest01/services/jwt_services.dart';
 import 'package:flutter/material.dart';
 import 'package:dart_jsonwebtoken/dart_jsonwebtoken.dart';
 import 'package:http/http.dart' as http;
-import 'package:intl/intl.dart';
 import 'dart:async';
 import 'dart:convert' as convert;
-
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
-class GetPaymentTokenDemo01 extends StatefulWidget {
-  const GetPaymentTokenDemo01({Key? key}) : super(key: key);
+class VoidSandbox extends StatefulWidget {
+  const VoidSandbox({Key? key}) : super(key: key);
 
   @override
-  State<GetPaymentTokenDemo01> createState() => _GetPaymentTokenDemo01State();
+  State<VoidSandbox> createState() => _VoidSandboxState();
 }
 
-class _GetPaymentTokenDemo01State extends State<GetPaymentTokenDemo01> {
+class _VoidSandboxState extends State<VoidSandbox> {
   final _formKey = GlobalKey<FormState>();
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   String pasteValue = '';
 
   String dropdownValue = "DEMO";
+  String holder = "";
   List<String> siteType = [
     'DEMO',
     'Production',
   ];
-  String? endpointURL = "https://sandbox-pgw.2c2p.com/payment/4.1/paymentToken";
+  String? endpointURL =
+      "https://demo2.2c2p.com/2C2PFrontend/PaymentAction/2.0/action";
   String secretKey =
-      "7E097B0BEC9E21F61388FF80500A8E0EA926875C55A2C33497636FB1242A06A5";
+      "CD229682D3297390B9F66FF4020B758F4A5E625AF4992E5D75D311D6458B38E2";
   DateTime now = DateTime.now();
-  String mid = "014010000000003";
+  String mid = "JT04";
   late String invNo = DateFormat("yyyyMMddhhmmss").format(now);
-  String description = "Demo01 item";
-  num amount = 50;
+  String description = "Sandbox item";
+  num amount = 20;
   String currencyCode = "THB";
   String frontendReturnUrl = "https://flutter.dev/";
   String backendReturnUrl =
       "https://16fb0121-3d49-4b81-acbd-3c1329f8f3f0.mock.pstmn.io";
 
   late String requestMsg =
-      '{\n"merchantID": "$mid",\n"invoiceNo": "DM01$invNo",\n"description": "$description",\n"amount": $amount,\n"currencyCode": "$currencyCode",\n"frontendReturnUrl": "$frontendReturnUrl",\n"backendReturnUrl": "$backendReturnUrl"\n}';
+      '<PaymentProcessRequest>\n  <version>3.8</version>\n  <merchantID>JT07</merchantID>\n  <invoiceNo>250221094450</invoiceNo>\n  <actionAmount>105.00</actionAmount>\n  <processType>V</processType>\n</PaymentProcessRequest>';
 
   String respBackToken =
       "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjYXJkTm8iOiI0MTExMTFYWFhYWFgxMTExIiwiY2FyZFRva2VuIjoiIiwibG95YWx0eVBvaW50cyI6bnVsbCwibWVyY2hhbnRJRCI6IjAxNDAxMDAwMDAwMDAwMyIsImludm9pY2VObyI6IjIwMjIwNDI0MDAwMDUxIiwiYW1vdW50IjoxMDAwLjAsIm1vbnRobHlQYXltZW50IjpudWxsLCJ1c2VyRGVmaW5lZDEiOiIiLCJ1c2VyRGVmaW5lZDIiOiIiLCJ1c2VyRGVmaW5lZDMiOiIiLCJ1c2VyRGVmaW5lZDQiOiIiLCJ1c2VyRGVmaW5lZDUiOiIiLCJjdXJyZW5jeUNvZGUiOiJUSEIiLCJyZWN1cnJpbmdVbmlxdWVJRCI6IiIsInRyYW5SZWYiOiI0ODczMjg0IiwicmVmZXJlbmNlTm8iOiI0NTEzMDI5IiwiYXBwcm92YWxDb2RlIjoiNjgzNTYzIiwiZWNpIjoiMDUiLCJ0cmFuc2FjdGlvbkRhdGVUaW1lIjoiMjAyMjA1MDMxNTQ1MTgiLCJhZ2VudENvZGUiOiJUQkFOSyIsImNoYW5uZWxDb2RlIjoiVkkiLCJpc3N1ZXJDb3VudHJ5IjoiVVMiLCJpc3N1ZXJCYW5rIjoiQkFOSyIsImluc3RhbGxtZW50TWVyY2hhbnRBYnNvcmJSYXRlIjpudWxsLCJjYXJkVHlwZSI6IkNSRURJVCIsImlkZW1wb3RlbmN5SUQiOiIiLCJwYXltZW50U2NoZW1lIjoiVkkiLCJyZXNwQ29kZSI6IjAwMDAiLCJyZXNwRGVzYyI6IlN1Y2Nlc3MifQ.g61cW9XFyzOuO3bV47g7Y2vUoyfQp6qMib6mpjR4oZI";
@@ -187,14 +188,24 @@ class _GetPaymentTokenDemo01State extends State<GetPaymentTokenDemo01> {
 
     if (backendRequestBody.statusCode == 200) {
       final responseJson = convert.jsonDecode(backendRequestBody.body);
-      final responseBodyToken = responseJson['payload'];
+      final responseBody =
+          responseJson['call-logs'][0]['request']['body']['data'];
+      final decodedRespBody = convert.jsonDecode(responseBody);
+      final responseToken = decodedRespBody['payload'];
+      context.read<JWTModels>().response = responseToken;
 
+      print(
+          "############################# Start of Response Backend #############################");
       print('Status Code: ${backendRequestBody.statusCode}');
       print('Response: ${backendRequestBody.body}');
       print('Response: $responseJson');
-      print('Response Token: $responseBodyToken');
+      print('Response Body: $responseBody');
+      print('Decoded Resp Body: $decodedRespBody');
+      print('Resp Token: $responseToken');
+      print(
+          "############################# End of Response Backend #############################");
 
-      if (responseBodyToken == null) {
+      if (responseBody == null) {
         print(responseJson['respDesc']);
         setState(() {
           context.read<JWTModels>().respCode = responseJson['respCode'];
@@ -209,8 +220,7 @@ class _GetPaymentTokenDemo01State extends State<GetPaymentTokenDemo01> {
     try {
       // JWT Decode
       final respToken = await context.read<JWTModels>().response;
-      final jwt2 =
-          JWT.verify(respToken, SecretKey(context.read<JWTModels>().secretKey));
+      final jwt2 = JWT.verify(respToken, SecretKey(secretKey));
 
       print('Response Backend Payload: ${jwt2.payload}');
 
@@ -386,13 +396,6 @@ class _GetPaymentTokenDemo01State extends State<GetPaymentTokenDemo01> {
                       const SizedBox(height: 5),
                       DropdownButton<String>(
                         value: dropdownValue,
-                        items: siteType
-                            .map<DropdownMenuItem<String>>((String value) {
-                          return DropdownMenuItem<String>(
-                            value: value,
-                            child: Text(value),
-                          );
-                        }).toList(),
                         icon: const Icon(Icons.arrow_drop_down),
                         underline:
                             Container(height: 2, color: Colors.transparent),
@@ -400,18 +403,24 @@ class _GetPaymentTokenDemo01State extends State<GetPaymentTokenDemo01> {
                             color: Colors.red,
                             fontSize: 16,
                             fontWeight: FontWeight.bold),
-                        onChanged: (newValue) {
+                        onChanged: (data) {
                           setState(() {
-                            dropdownValue = newValue!;
-                            if (newValue == "DEMO") {
-                              endpointURL =
-                                  'https://sandbox-pgw.2c2p.com/payment/4.1/paymentToken';
+                            dropdownValue = data!;
+                            if (data == "DEMO") {
+                              endpointURL;
                             } else {
                               endpointURL =
-                                  'https://pgw.2c2p.com/payment/4.1/paymentToken';
+                                  'https://t.2c2p.com/PaymentAction/2.0/action';
                             }
                           });
                         },
+                        items: siteType
+                            .map<DropdownMenuItem<String>>((String value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(value),
+                          );
+                        }).toList(),
                       ),
                       Text(endpointURL!,
                           style: const TextStyle(
@@ -477,11 +486,11 @@ class _GetPaymentTokenDemo01State extends State<GetPaymentTokenDemo01> {
                                 )
                               : context.read<JWTModels>().respDesc == "Success"
                                   ? SelectableText.rich(TextSpan(
-                                          text:
-                                              '{  \n"webPaymentURL": "${context.read<JWTModels>().webPaymentURL}",',
-                                          style: const TextStyle(
-                                              color: Colors.cyanAccent),
-                                          children: <TextSpan>[
+                                      text:
+                                          '{  \n"webPaymentURL": "${context.read<JWTModels>().webPaymentURL}",',
+                                      style: const TextStyle(
+                                          color: Colors.cyanAccent),
+                                      children: <TextSpan>[
                                           TextSpan(
                                               text:
                                                   '\n"paymentToken": "${context.read<JWTModels>().paymentToken}",',
@@ -538,7 +547,6 @@ class _GetPaymentTokenDemo01State extends State<GetPaymentTokenDemo01> {
                                   "Please recheck your request message to get valid payment link button.",
                                   style: TextStyle(color: Colors.red),
                                 )),
-                      const SizedBox(height: 10),
                       const Divider(
                         thickness: 1,
                       ),
@@ -547,6 +555,7 @@ class _GetPaymentTokenDemo01State extends State<GetPaymentTokenDemo01> {
                         style: TextStyle(
                             fontSize: 18, fontWeight: FontWeight.bold),
                       ),
+                      const SizedBox(height: 10),
                       SizedBox(
                         width: double.infinity,
                         height: 35,
@@ -563,7 +572,6 @@ class _GetPaymentTokenDemo01State extends State<GetPaymentTokenDemo01> {
                       const Divider(
                         thickness: 1,
                       ),
-                      
                       const Text(
                         "Backend Return Token",
                         style: TextStyle(
@@ -613,4 +621,9 @@ class _GetPaymentTokenDemo01State extends State<GetPaymentTokenDemo01> {
               )),
         ));
   }
+}
+
+class Site {
+  const Site(this.site);
+  final String site;
 }
