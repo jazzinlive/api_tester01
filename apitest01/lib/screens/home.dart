@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:apitest01/screens/get_payment_token.dart';
+import 'package:apitest01/screens/lego_uat.dart';
 import 'package:apitest01/screens/paywise.dart';
 import 'package:apitest01/screens/qr_api.dart';
 import 'package:apitest01/screens/voidAPI.dart';
@@ -285,7 +286,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         Navigator.of(context).push(
                           MaterialPageRoute(
                             builder: (BuildContext context) =>
-                                const GetPaymentTokenPage(),
+                                LegoUAT(),
                           ),
                         );
                       },

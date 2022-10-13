@@ -64,13 +64,13 @@ class _PaywiseState extends State<Paywise> {
   Future<void> _launchURL() async {
     if (await canLaunchUrlString(
         //"line://pay/payment/ek03TTYyQjJabDZnN3dDSXdKY1VzS1hVeHNCMGhmOVYyeXRNc2VjZEVJd2trdFVkQmlhaUQrbTRHMjQ4d09jaw"
-        "https://line.me/R/pay/payment/ek03TTYyQjJabDZnN3dDSXdKY1VzS1hVeHNCMGhmOVYyeXRNc2VjZEVJd2trdFVkQmlhaUQrbTRHMjQ4d09jaw"
-        //_deeplinkUrl.toString(),
+      //"https://line.me/R/pay/payment/ek03TTYyQjJabDZnN3dDSXdKY1VzS1hVeHNCMGhmOVYyeXRNc2VjZEVJd2trdFVkQmlhaUQrbTRHMjQ4d09jaw"
+      _deeplinkUrl.toString(),
     )) {
       launchUrlString(
           //"line://pay/payment/ek03TTYyQjJabDZnN3dDSXdKY1VzS1hVeHNCMGhmOVYyeXRNc2VjZEVJd2trdFVkQmlhaUQrbTRHMjQ4d09jaw"
-          "https://line.me/R/pay/payment/ek03TTYyQjJabDZnN3dDSXdKY1VzS1hVeHNCMGhmOVYyeXRNc2VjZEVJd2trdFVkQmlhaUQrbTRHMjQ4d09jaw"
-          //_deeplinkUrl.toString()
+          //"https://line.me/R/pay/payment/ek03TTYyQjJabDZnN3dDSXdKY1VzS1hVeHNCMGhmOVYyeXRNc2VjZEVJd2trdFVkQmlhaUQrbTRHMjQ4d09jaw"
+          _deeplinkUrl.toString()
           );
     }
 
