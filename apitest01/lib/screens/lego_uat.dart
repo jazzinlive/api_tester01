@@ -171,7 +171,7 @@ class _LegoUATState extends State<LegoUAT> {
         ),
       );
       // ignore: deprecated_member_use
-      _scaffoldKey.currentState!.showSnackBar(snackBar);
+      //_scaffoldKey.currentState!.showSnackBar(snackBar);
     }
 
     return "1";

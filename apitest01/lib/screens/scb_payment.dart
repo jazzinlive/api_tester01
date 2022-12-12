@@ -68,7 +68,7 @@ class SCBPaymentState extends State<SCBPayment> {
           ),
         );
         // ignore: deprecated_member_use
-        _scaffoldKey.currentState!.showSnackBar(snackBar);
+        //_scaffoldKey.currentState!.showSnackBar(snackBar);
       }
     });
   }

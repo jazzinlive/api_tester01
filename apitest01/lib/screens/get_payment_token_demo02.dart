@@ -177,7 +177,7 @@ class _GetPaymentTokenDemo02State extends State<GetPaymentTokenDemo02> {
         ),
       );
       // ignore: deprecated_member_use
-      _scaffoldKey.currentState!.showSnackBar(snackBar);
+      //_scaffoldKey.currentState!.showSnackBar(snackBar);
     }
 
     return "1";
