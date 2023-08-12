@@ -1,3 +1,5 @@
+// ignore_for_file: unused_local_variable, unused_field
+
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -5,7 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:apitest01/models/jwt_models.dart';
 import 'package:apitest01/screens/redirect_payment.dart';
 import 'package:apitest01/services/jwt_services.dart';
-import 'package:flutter/material.dart';
 import 'package:dart_jsonwebtoken/dart_jsonwebtoken.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
@@ -151,8 +152,8 @@ class _LegoUATState extends State<LegoUAT> {
               return webPaymentUrl;
             }
           });
-        } on JWTError catch (ex) {
-          print(ex.message); // ex: invalid signature
+        } on Exception catch (ex) {
+          print(ex); // ex: invalid signature
         }
       }
 
@@ -219,8 +220,8 @@ class _LegoUATState extends State<LegoUAT> {
       setState(() {
         context.read<JWTModels>().decodedPayload = jwt2.payload.toString();
       });
-    } on JWTError catch (ex) {
-      print(ex.message); // ex: invalid signature
+    } on Exception catch (ex) {
+      print(ex); // ex: invalid signature
     }
   }
 

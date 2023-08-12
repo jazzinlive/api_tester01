@@ -1,3 +1,5 @@
+// ignore_for_file: unused_local_variable
+
 import 'dart:convert';
 
 import 'package:apitest01/models/jwt_models.dart';
@@ -113,7 +115,7 @@ class _FormTokenDemo01State extends State<FormTokenDemo01> {
           return "";
         }
         context.read<JWTModels>().decodedToken = responseBodyToken;
-        
+
         // step 4 : decrypt JWT to json (get webPaymentURL)
         print(
             "################# step 4 : decrypt JWT to json (get webPaymentURL) #################");
@@ -150,8 +152,8 @@ class _FormTokenDemo01State extends State<FormTokenDemo01> {
                           context.read<JWTModels>().webPaymentURL)));
             }
           });
-        } on JWTError catch (ex) {
-          print(ex.message); // ex: invalid signature
+        } on Exception catch (ex) {
+          print(ex); // ex: invalid signature
         }
       }
       return "0";
@@ -235,8 +237,8 @@ class _FormTokenDemo01State extends State<FormTokenDemo01> {
               return webPaymentUrl;
             }
           });
-        } on JWTError catch (ex) {
-          print(ex.message); // ex: invalid signature
+        } on Exception catch (ex) {
+          print(ex); // ex: invalid signature
         }
       }
 
@@ -254,7 +256,7 @@ class _FormTokenDemo01State extends State<FormTokenDemo01> {
           },
         ),
       );
-      
+
       //_scaffoldKey.currentState!.showSnackBar(snackBar);
     }
 
@@ -301,8 +303,8 @@ class _FormTokenDemo01State extends State<FormTokenDemo01> {
       setState(() {
         context.read<JWTModels>().decodedPayload = jwt2.payload.toString();
       });
-    } on JWTError catch (ex) {
-      print(ex.message); // ex: invalid signature
+    } on Exception catch (ex) {
+      print(ex); // ex: invalid signature
     }
   }
 
@@ -312,7 +314,6 @@ class _FormTokenDemo01State extends State<FormTokenDemo01> {
   void initState() {
     super.initState();
   }
-
 
   @override
   Widget build(BuildContext context) {

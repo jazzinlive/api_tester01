@@ -1,22 +1,10 @@
-import 'dart:async';
-import 'dart:convert';
 
 import 'package:apitest01/screens/qr_api_qr30.dart';
 import 'package:apitest01/screens/qr_api_qrall.dart';
 import 'package:apitest01/screens/qr_api_qrcs.dart';
-import 'package:dart_jsonwebtoken/dart_jsonwebtoken.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:http/http.dart' as http;
-import 'package:image_picker/image_picker.dart';
-import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
-import 'package:image_save/image_save.dart';
-import 'package:status_alert/status_alert.dart';
 
-import 'package:apitest01/services/jwt_services.dart';
 
-import '../models/qr_models.dart';
 
 class QRPayment extends StatefulWidget {
   const QRPayment({Key? key}) : super(key: key);

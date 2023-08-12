@@ -1,3 +1,5 @@
+// ignore_for_file: unused_local_variable
+
 import 'dart:core';
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
@@ -6,7 +8,7 @@ import '../services/scb_services.dart';
 class SCBPayment extends StatefulWidget {
   final Function onFinish;
 
-  SCBPayment({required this.onFinish});
+  const SCBPayment({Key? key, required this.onFinish}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() {
@@ -15,7 +17,7 @@ class SCBPayment extends StatefulWidget {
 }
 
 class SCBPaymentState extends State<SCBPayment> {
-  GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   var checkoutUrl;
   var executeUrl;
   var accessToken;
@@ -58,7 +60,7 @@ class SCBPaymentState extends State<SCBPayment> {
         print('exception: ' + e.toString());
         final snackBar = SnackBar(
           content: Text(e.toString()),
-          duration: Duration(seconds: 10),
+          duration: const Duration(seconds: 10),
           action: SnackBarAction(
             label: 'Close',
             onPressed: () {
@@ -149,9 +151,9 @@ class SCBPaymentState extends State<SCBPayment> {
     if (checkoutUrl != null) {
       return Scaffold(
         appBar: AppBar(
-          backgroundColor: Theme.of(context).backgroundColor,
+          backgroundColor: Theme.of(context).colorScheme.background,
           leading: GestureDetector(
-            child: Icon(Icons.arrow_back_ios),
+            child: const Icon(Icons.arrow_back_ios),
             onTap: () => Navigator.pop(context),
           ),
         ),
@@ -186,14 +188,15 @@ class SCBPaymentState extends State<SCBPayment> {
         key: _scaffoldKey,
         appBar: AppBar(
           leading: IconButton(
-              icon: Icon(Icons.arrow_back),
+              icon: const Icon(Icons.arrow_back),
               onPressed: () {
                 Navigator.of(context).pop();
               }),
           backgroundColor: Colors.black12,
           elevation: 0.0,
         ),
-        body: Center(child: Container(child: CircularProgressIndicator())),
+        body:
+            Center(child: Container(child: const CircularProgressIndicator())),
       );
     }
   }

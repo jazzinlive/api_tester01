@@ -1,3 +1,5 @@
+// ignore_for_file: unused_local_variable
+
 import 'dart:convert';
 
 import 'package:apitest01/models/jwt_models.dart';
@@ -49,7 +51,6 @@ class _GetPaymentTokenDemo02State extends State<GetPaymentTokenDemo02> {
   String respBackToken =
       "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjYXJkTm8iOiI0MTExMTFYWFhYWFgxMTExIiwiY2FyZFRva2VuIjoiIiwibG95YWx0eVBvaW50cyI6bnVsbCwibWVyY2hhbnRJRCI6IjAxNDAxMDAwMDAwMDAwMyIsImludm9pY2VObyI6IjIwMjIwNDI0MDAwMDUxIiwiYW1vdW50IjoxMDAwLjAsIm1vbnRobHlQYXltZW50IjpudWxsLCJ1c2VyRGVmaW5lZDEiOiIiLCJ1c2VyRGVmaW5lZDIiOiIiLCJ1c2VyRGVmaW5lZDMiOiIiLCJ1c2VyRGVmaW5lZDQiOiIiLCJ1c2VyRGVmaW5lZDUiOiIiLCJjdXJyZW5jeUNvZGUiOiJUSEIiLCJyZWN1cnJpbmdVbmlxdWVJRCI6IiIsInRyYW5SZWYiOiI0ODczMjg0IiwicmVmZXJlbmNlTm8iOiI0NTEzMDI5IiwiYXBwcm92YWxDb2RlIjoiNjgzNTYzIiwiZWNpIjoiMDUiLCJ0cmFuc2FjdGlvbkRhdGVUaW1lIjoiMjAyMjA1MDMxNTQ1MTgiLCJhZ2VudENvZGUiOiJUQkFOSyIsImNoYW5uZWxDb2RlIjoiVkkiLCJpc3N1ZXJDb3VudHJ5IjoiVVMiLCJpc3N1ZXJCYW5rIjoiQkFOSyIsImluc3RhbGxtZW50TWVyY2hhbnRBYnNvcmJSYXRlIjpudWxsLCJjYXJkVHlwZSI6IkNSRURJVCIsImlkZW1wb3RlbmN5SUQiOiIiLCJwYXltZW50U2NoZW1lIjoiVkkiLCJyZXNwQ29kZSI6IjAwMDAiLCJyZXNwRGVzYyI6IlN1Y2Nlc3MifQ.g61cW9XFyzOuO3bV47g7Y2vUoyfQp6qMib6mpjR4oZI";
   String? tokenValue;
-  
 
   void getDropDownItem() {
     setState(() {
@@ -157,8 +158,8 @@ class _GetPaymentTokenDemo02State extends State<GetPaymentTokenDemo02> {
               return webPaymentUrl;
             }
           });
-        } on JWTError catch (ex) {
-          print(ex.message); // ex: invalid signature
+        } on Exception catch (ex) {
+          print(ex); // ex: invalid signature
         }
       }
 
@@ -225,8 +226,8 @@ class _GetPaymentTokenDemo02State extends State<GetPaymentTokenDemo02> {
       setState(() {
         context.read<JWTModels>().decodedPayload = jwt2.payload.toString();
       });
-    } on JWTError catch (ex) {
-      print(ex.message); // ex: invalid signature
+    } on Exception catch (ex) {
+      print(ex); // ex: invalid signature
     }
   }
 
@@ -485,11 +486,11 @@ class _GetPaymentTokenDemo02State extends State<GetPaymentTokenDemo02> {
                                 )
                               : context.read<JWTModels>().respDesc == "Success"
                                   ? SelectableText.rich(TextSpan(
-                                          text:
-                                              '{  \n"webPaymentURL": "${context.read<JWTModels>().webPaymentURL}",',
-                                          style: const TextStyle(
-                                              color: Colors.cyanAccent),
-                                          children: <TextSpan>[
+                                      text:
+                                          '{  \n"webPaymentURL": "${context.read<JWTModels>().webPaymentURL}",',
+                                      style: const TextStyle(
+                                          color: Colors.cyanAccent),
+                                      children: <TextSpan>[
                                           TextSpan(
                                               text:
                                                   '\n"paymentToken": "${context.read<JWTModels>().paymentToken}",',
@@ -571,7 +572,6 @@ class _GetPaymentTokenDemo02State extends State<GetPaymentTokenDemo02> {
                       const Divider(
                         thickness: 1,
                       ),
-                      
                       const Text(
                         "Backend Return Token",
                         style: TextStyle(
@@ -622,4 +622,3 @@ class _GetPaymentTokenDemo02State extends State<GetPaymentTokenDemo02> {
         ));
   }
 }
-

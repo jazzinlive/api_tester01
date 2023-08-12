@@ -4,7 +4,6 @@ import 'package:dart_jsonwebtoken/dart_jsonwebtoken.dart';
 import 'package:http/http.dart' as http;
 import 'dart:async';
 import 'dart:convert' as convert;
-import 'package:http_auth/http_auth.dart';
 
 class SCBServices {
   String domain = "https://sandbox-pgw.2c2p.com/payment/4.1/paymentToken";

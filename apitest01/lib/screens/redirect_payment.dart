@@ -1,15 +1,13 @@
 import 'dart:async';
 import 'dart:io';
-import 'package:apitest01/models/jwt_models.dart';
 import 'package:apitest01/screens/menu.dart';
 import 'package:apitest01/screens/nav_control.dart';
 import 'package:apitest01/screens/web_view_stack.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class RedirectPaymentPage extends StatefulWidget {
-  RedirectPaymentPage(webPaymentURL, {Key? key}) : super(key: key);
+  const RedirectPaymentPage(webPaymentURL, {Key? key}) : super(key: key);
 
   @override
   State<RedirectPaymentPage> createState() => _RedirectPaymentPageState();

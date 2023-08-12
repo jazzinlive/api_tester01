@@ -1,3 +1,5 @@
+// ignore_for_file: unused_local_variable
+
 import 'dart:convert';
 
 import 'package:apitest01/models/jwt_models.dart';
@@ -149,8 +151,8 @@ class _GetPaymentTokenState extends State<GetPaymentToken> {
               return webPaymentUrl;
             }
           });
-        } on JWTError catch (ex) {
-          print(ex.message); // ex: invalid signature
+        } on Exception catch (ex) {
+          print(ex); // ex: invalid signature
         }
       }
 
@@ -219,16 +221,15 @@ class _GetPaymentTokenState extends State<GetPaymentToken> {
     try {
       // JWT Decode
       final respToken = await context.read<JWTModels>().response;
-      final jwt2 =
-          JWT.verify(respToken, SecretKey(secretKey));
+      final jwt2 = JWT.verify(respToken, SecretKey(secretKey));
 
       print('Response Backend Payload: ${jwt2.payload}');
 
       setState(() {
         context.read<JWTModels>().decodedPayload = jwt2.payload.toString();
       });
-    } on JWTError catch (ex) {
-      print(ex.message); // ex: invalid signature
+    } on Exception catch (ex) {
+      print(ex); // ex: invalid signature
     }
   }
 
@@ -487,11 +488,11 @@ class _GetPaymentTokenState extends State<GetPaymentToken> {
                                 )
                               : context.read<JWTModels>().respDesc == "Success"
                                   ? SelectableText.rich(TextSpan(
-                                          text:
-                                              '{  \n"webPaymentURL": "${context.read<JWTModels>().webPaymentURL}",',
-                                          style: const TextStyle(
-                                              color: Colors.cyanAccent),
-                                          children: <TextSpan>[
+                                      text:
+                                          '{  \n"webPaymentURL": "${context.read<JWTModels>().webPaymentURL}",',
+                                      style: const TextStyle(
+                                          color: Colors.cyanAccent),
+                                      children: <TextSpan>[
                                           TextSpan(
                                               text:
                                                   '\n"paymentToken": "${context.read<JWTModels>().paymentToken}",',
@@ -548,7 +549,6 @@ class _GetPaymentTokenState extends State<GetPaymentToken> {
                                   "Please recheck your request message to get valid payment link button.",
                                   style: TextStyle(color: Colors.red),
                                 )),
-                      
                       const Divider(
                         thickness: 1,
                       ),
@@ -571,11 +571,9 @@ class _GetPaymentTokenState extends State<GetPaymentToken> {
                               "Get Backend Return Token",
                             )),
                       ),
-                      
                       const Divider(
                         thickness: 1,
                       ),
-                      
                       const Text(
                         "Backend Return Token",
                         style: TextStyle(

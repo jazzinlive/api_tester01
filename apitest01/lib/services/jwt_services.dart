@@ -1,11 +1,9 @@
 import 'dart:io';
 
-import 'package:apitest01/models/jwt_models.dart';
 import 'package:dart_jsonwebtoken/dart_jsonwebtoken.dart';
 import 'package:http/http.dart' as http;
 import 'dart:async';
 import 'dart:convert' as convert;
-import 'package:http_auth/http_auth.dart';
 
 class JWTServices {
   String secretKey =

@@ -1,3 +1,5 @@
+// ignore_for_file: unused_local_variable
+
 import 'dart:async';
 import 'dart:convert';
 
@@ -210,8 +212,8 @@ class _QRCSPaymentState extends State<QRCSPayment> {
       setState(() {
         context.read<QRModels>().decodedPayload = jwt2.payload.toString();
       });
-    } on JWTError catch (ex) {
-      print(ex.message); // ex: invalid signature
+    } on Exception catch (ex) {
+      print(ex); // ex: invalid signature
     }
   }
 

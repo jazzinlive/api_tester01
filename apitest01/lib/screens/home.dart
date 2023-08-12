@@ -1,4 +1,3 @@
-import 'dart:math';
 
 import 'package:apitest01/screens/get_payment_token.dart';
 import 'package:apitest01/screens/lego_uat.dart';
@@ -11,7 +10,7 @@ import 'form_token_demo01.dart';
 
 class MyHomePage extends StatefulWidget {
   
-  MyHomePage({Key? key, required this.title}) : super(key: key);
+  const MyHomePage({Key? key, required this.title}) : super(key: key);
   final String title;
 
   @override
@@ -31,7 +30,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   colorFilter: ColorFilter.linearToSrgbGamma())),
           child: Center(
             child: SingleChildScrollView(
-              physics: BouncingScrollPhysics(),
+              physics: const BouncingScrollPhysics(),
               child: Padding(
                 padding: const EdgeInsets.all(10.0),
                 child: Column(
@@ -58,8 +57,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
                           shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10)),
-                          primary: const Color.fromARGB(255, 6, 73, 77)),
+                              borderRadius: BorderRadius.circular(10)), backgroundColor: const Color.fromARGB(255, 6, 73, 77)),
                       onPressed: () {
                         Navigator.of(context).push(
                           MaterialPageRoute(
@@ -90,8 +88,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
                           shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10)),
-                          primary: const Color.fromARGB(255, 6, 73, 77)),
+                              borderRadius: BorderRadius.circular(10)), backgroundColor: const Color.fromARGB(255, 6, 73, 77)),
                       onPressed: () {
                         Navigator.of(context).push(
                           MaterialPageRoute(
@@ -122,8 +119,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
                               shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10)),
-                              primary: const Color.fromARGB(255, 6, 73, 77)),
+                                  borderRadius: BorderRadius.circular(10)), backgroundColor: const Color.fromARGB(255, 6, 73, 77)),
                           onPressed: () {
                             Navigator.of(context).push(
                               MaterialPageRoute(
@@ -154,8 +150,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
                           shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10)),
-                          primary: const Color.fromARGB(255, 52, 2, 92)),
+                              borderRadius: BorderRadius.circular(10)), backgroundColor: const Color.fromARGB(255, 52, 2, 92)),
                       onPressed: () {
                         Navigator.of(context).push(
                           MaterialPageRoute(
@@ -188,8 +183,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
                           shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10)),
-                          primary: const Color.fromARGB(255, 52, 2, 92)),
+                              borderRadius: BorderRadius.circular(10)), backgroundColor: const Color.fromARGB(255, 52, 2, 92)),
                       onPressed: () {
                         Navigator.of(context).push(
                           MaterialPageRoute(
@@ -278,15 +272,14 @@ class _MyHomePageState extends State<MyHomePage> {
                   height: 60,
                   child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                          padding: EdgeInsets.zero,
+                          padding: EdgeInsets.zero, backgroundColor: const Color.fromARGB(255, 52, 2, 92),
                           shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10)),
-                          primary: const Color.fromARGB(255, 52, 2, 92)),
+                              borderRadius: BorderRadius.circular(10))),
                       onPressed: () {
                         Navigator.of(context).push(
                           MaterialPageRoute(
                             builder: (BuildContext context) =>
-                                LegoUAT(),
+                                const LegoUAT(),
                           ),
                         );
                       },

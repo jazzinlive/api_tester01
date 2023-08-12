@@ -1,3 +1,5 @@
+// ignore_for_file: unused_local_variable
+
 import 'dart:convert';
 
 import 'package:apitest01/models/jwt_models.dart';
@@ -150,8 +152,8 @@ class _VoidSandboxState extends State<VoidSandbox> {
               return webPaymentUrl;
             }
           });
-        } on JWTError catch (ex) {
-          print(ex.message); // ex: invalid signature
+        } on Exception catch (ex) {
+          print(ex); // ex: invalid signature
         }
       }
 
@@ -169,7 +171,7 @@ class _VoidSandboxState extends State<VoidSandbox> {
           },
         ),
       );
-      
+
       //_scaffoldKey.currentState!.showSnackBar(snackBar);
     }
 
@@ -227,8 +229,8 @@ class _VoidSandboxState extends State<VoidSandbox> {
       setState(() {
         context.read<JWTModels>().decodedPayload = jwt2.payload.toString();
       });
-    } on JWTError catch (ex) {
-      print(ex.message); // ex: invalid signature
+    } on Exception catch (ex) {
+      print(ex); // ex: invalid signature
     }
   }
 

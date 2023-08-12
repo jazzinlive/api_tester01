@@ -16,8 +16,8 @@ class NavigationControls extends StatelessWidget {
         final WebViewController? controller = snapshot.data;
         if (snapshot.connectionState != ConnectionState.done ||
             controller == null) {
-          return Row(
-            children: const <Widget>[
+          return const Row(
+            children: <Widget>[
               Icon(Icons.arrow_back_ios),
               Icon(Icons.arrow_forward_ios),
               Icon(Icons.replay),

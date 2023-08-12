@@ -1,23 +1,20 @@
+// ignore_for_file: unused_local_variable
+
 import 'dart:async';
 import 'dart:convert' as convert;
-import 'dart:io';
 
 import 'package:dart_jsonwebtoken/dart_jsonwebtoken.dart';
-import 'package:encrypt/encrypt.dart';
-import 'package:encrypt/encrypt_io.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:intl/intl.dart';
-import 'package:jose/jose.dart';
-import 'package:pointycastle/asymmetric/api.dart';
 import 'package:provider/provider.dart';
-import 'package:x509/x509.dart';
 
 import 'package:apitest01/models/jwt_models.dart';
 import 'package:apitest01/screens/redirect_payment.dart';
 import 'package:apitest01/services/jwt_services.dart';
 
 class VoidDemo01 extends StatefulWidget {
+  const VoidDemo01({Key? key}) : super(key: key);
+
   // const VoidDemo01({Key? key}) : super(key: key);
 
   @override
@@ -163,8 +160,8 @@ class _VoidDemo01State extends State<VoidDemo01> {
               return webPaymentUrl;
             }
           });
-        } on JWTError catch (ex) {
-          print(ex.message); // ex: invalid signature
+        } on Exception catch (ex) {
+          print(ex); // ex: invalid signature
         }
       }
 
@@ -230,8 +227,8 @@ class _VoidDemo01State extends State<VoidDemo01> {
       setState(() {
         context.read<JWTModels>().decodedPayload = jwt2.payload.toString();
       });
-    } on JWTError catch (ex) {
-      print(ex.message); // ex: invalid signature
+    } on Exception catch (ex) {
+      print(ex); // ex: invalid signature
     }
   }
 
