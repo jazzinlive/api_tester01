@@ -24,6 +24,13 @@ class FormTokenDemo01 extends StatefulWidget {
 class _FormTokenDemo01State extends State<FormTokenDemo01> {
   final _formKey = GlobalKey<FormState>();
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
+  @override
+  void initState() {
+    super.initState();
+    setState(() {});
+  }
+
   String pasteValue = '';
 
   String dropdownValue = "DEMO";
@@ -45,8 +52,8 @@ class _FormTokenDemo01State extends State<FormTokenDemo01> {
   String backendReturnUrl =
       "https://16fb0121-3d49-4b81-acbd-3c1329f8f3f0.mock.pstmn.io";
 
-  late String? requestMsg =
-      '{\n"merchantID": "${context.read<JWTModels>().mid}",\n"invoiceNo": "${context.read<JWTModels>().invNo}",\n"description": "${context.read<JWTModels>().description}",\n"amount": ${context.read<JWTModels>().amount},\n"currencyCode": "$currencyCode",\n"frontendReturnUrl": "$frontendReturnUrl",\n"backendReturnUrl": "$backendReturnUrl"\n}';
+  late final String requestMsg =
+      '{\n"merchantID": "${Provider.of<JWTModels>(context, listen: false).mid}",\n"invoiceNo": "${Provider.of<JWTModels>(context, listen: false).invNo}",\n"description": "${Provider.of<JWTModels>(context, listen: false).description}",\n"amount": ${Provider.of<JWTModels>(context, listen: false).amount},\n"currencyCode": "$currencyCode",\n"frontendReturnUrl": "$frontendReturnUrl",\n"backendReturnUrl": "$backendReturnUrl"\n}';
 
   String respBackToken =
       "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjYXJkTm8iOiI0MTExMTFYWFhYWFgxMTExIiwiY2FyZFRva2VuIjoiIiwibG95YWx0eVBvaW50cyI6bnVsbCwibWVyY2hhbnRJRCI6IjAxNDAxMDAwMDAwMDAwMyIsImludm9pY2VObyI6IjIwMjIwNDI0MDAwMDUxIiwiYW1vdW50IjoxMDAwLjAsIm1vbnRobHlQYXltZW50IjpudWxsLCJ1c2VyRGVmaW5lZDEiOiIiLCJ1c2VyRGVmaW5lZDIiOiIiLCJ1c2VyRGVmaW5lZDMiOiIiLCJ1c2VyRGVmaW5lZDQiOiIiLCJ1c2VyRGVmaW5lZDUiOiIiLCJjdXJyZW5jeUNvZGUiOiJUSEIiLCJyZWN1cnJpbmdVbmlxdWVJRCI6IiIsInRyYW5SZWYiOiI0ODczMjg0IiwicmVmZXJlbmNlTm8iOiI0NTEzMDI5IiwiYXBwcm92YWxDb2RlIjoiNjgzNTYzIiwiZWNpIjoiMDUiLCJ0cmFuc2FjdGlvbkRhdGVUaW1lIjoiMjAyMjA1MDMxNTQ1MTgiLCJhZ2VudENvZGUiOiJUQkFOSyIsImNoYW5uZWxDb2RlIjoiVkkiLCJpc3N1ZXJDb3VudHJ5IjoiVVMiLCJpc3N1ZXJCYW5rIjoiQkFOSyIsImluc3RhbGxtZW50TWVyY2hhbnRBYnNvcmJSYXRlIjpudWxsLCJjYXJkVHlwZSI6IkNSRURJVCIsImlkZW1wb3RlbmN5SUQiOiIiLCJwYXltZW50U2NoZW1lIjoiVkkiLCJyZXNwQ29kZSI6IjAwMDAiLCJyZXNwRGVzYyI6IlN1Y2Nlc3MifQ.g61cW9XFyzOuO3bV47g7Y2vUoyfQp6qMib6mpjR4oZI";
@@ -146,10 +153,13 @@ class _FormTokenDemo01State extends State<FormTokenDemo01> {
 
             if (respCode == "0000") {
               Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => RedirectPaymentPage(
-                          context.read<JWTModels>().webPaymentURL)));
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => RedirectPaymentPage(
+                              context.read<JWTModels>().webPaymentURL)))
+                  .then((value) => setState(() {
+                        print("Set State Work!!!!!!!!");
+                      }));
             }
           });
         } on Exception catch (ex) {
@@ -263,34 +273,6 @@ class _FormTokenDemo01State extends State<FormTokenDemo01> {
     return "1";
   }
 
-  // void getBackendResponse() async {
-  //   final backendRequestBody = await http.get(
-  //       Uri.parse(backendReturnURL),
-  //       headers: {'content-type': 'application/json'},
-  //       // body: jsonEncode({
-  //       //   'payload': tokenValue,
-  //       // }),
-  //     );
-
-  //     if (backendRequestBody.statusCode == 200) {
-  //       final responseJson = convert.jsonDecode(backendRequestBody.body);
-  //       final responseBodyToken = responseJson['payload'];
-
-  //       print('Status Code: ${backendRequestBody.statusCode}');
-  //       print('Response: ${backendRequestBody.body}');
-  //       print('Response: $responseJson');
-  //       print('Response Token: $responseBodyToken');
-
-  //       if (responseBodyToken == null) {
-  //         print(responseJson['respDesc']);
-  //         setState(() {
-  //           context.read<JWTModels>().respCode = responseJson['respCode'];
-  //           context.read<JWTModels>().respDesc = responseJson['respDesc'];
-  //         });
-  //         return ;
-  //       }
-  // }
-
   void responseBackend() async {
     try {
       // JWT Decode
@@ -309,11 +291,6 @@ class _FormTokenDemo01State extends State<FormTokenDemo01> {
   }
 
   var jwts = JWTServices();
-
-  @override
-  void initState() {
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -352,7 +329,25 @@ class _FormTokenDemo01State extends State<FormTokenDemo01> {
                       const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
                   child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
+                      children: <Widget>[
+                        Text(requestMsg),
+                        Text(
+                          'Merchant ID : ${Provider.of<JWTModels>(context).mid}',
+                          style: const TextStyle(fontSize: 15.0),
+                        ),
+                        Text(
+                          'Secret Key : ${Provider.of<JWTModels>(context).invNo}',
+                          style: const TextStyle(fontSize: 15.0),
+                        ),
+                        Text(
+                          'Description : ${Provider.of<JWTModels>(context).description}',
+                          style: const TextStyle(fontSize: 15.0),
+                        ),
+                        Text(
+                          'Amount : ${Provider.of<JWTModels>(context).amount}',
+                          style: const TextStyle(fontSize: 15.0),
+                        ),
+                        const SizedBox(height: 5),
                         const Text(
                           "Secret Key",
                           style: TextStyle(
@@ -409,7 +404,7 @@ class _FormTokenDemo01State extends State<FormTokenDemo01> {
                             Expanded(
                               flex: 3,
                               child: SizedBox(
-                                height: 50,
+                                height: 40,
                                 child: TextFormField(
                                   keyboardType: TextInputType.multiline,
                                   initialValue:
@@ -449,7 +444,7 @@ class _FormTokenDemo01State extends State<FormTokenDemo01> {
                             Expanded(
                               flex: 3,
                               child: SizedBox(
-                                height: 50,
+                                height: 40,
                                 child: TextFormField(
                                   keyboardType: TextInputType.multiline,
                                   initialValue:
@@ -489,7 +484,7 @@ class _FormTokenDemo01State extends State<FormTokenDemo01> {
                             Expanded(
                               flex: 3,
                               child: SizedBox(
-                                height: 50,
+                                height: 40,
                                 child: TextFormField(
                                   keyboardType: TextInputType.multiline,
                                   initialValue:
@@ -531,7 +526,7 @@ class _FormTokenDemo01State extends State<FormTokenDemo01> {
                             Expanded(
                               flex: 3,
                               child: SizedBox(
-                                height: 50,
+                                height: 40,
                                 child: TextFormField(
                                   keyboardType: TextInputType.number,
                                   initialValue: context
@@ -567,50 +562,24 @@ class _FormTokenDemo01State extends State<FormTokenDemo01> {
                             ),
                           ],
                         ),
-                        // const SizedBox(height: 5),
-                        // Container(
-                        //   width: double.infinity,
-                        //   padding: const EdgeInsets.all(10),
-                        //   decoration: BoxDecoration(
-                        //     color: Colors.grey[900],
-                        //   ),
-                        //   child: context.read<JWTModels>().amount == null
-                        //       ? const Text(
-                        //           'No message request',
-                        //           style: TextStyle(color: Colors.redAccent),
-                        //         )
-                        //       : Text(
-                        //           '$requestMsg',
-                        //           style: const TextStyle(
-                        //               color: Colors.cyanAccent, fontSize: 13),
-                        //         ),
-                        // ),
-                        // TextFormField(
-                        //   keyboardType: TextInputType.multiline,
-                        //   maxLines: 6,
-                        //   initialValue: context.read<JWTModels>().requestMsg,
-                        //   decoration: const InputDecoration(
-                        //     border: InputBorder.none,
-                        //     filled: true,
-                        //     fillColor: Color.fromARGB(255, 244, 245, 198),
-                        //     hintText: "Input message request",
-                        //   ),
-                        //   style: TextStyle(color: Colors.red[900]),
-                        //   validator: (value) {
-                        //     if (value == null || value.isEmpty) {
-                        //       return 'Please input request message payload.';
-                        //     }
-                        //     return null;
-                        //   },
-                        //   onChanged: (value) {
-                        //     setState(() {
-                        //       context.read<JWTModels>().requestMsg = value;
-                        //     });
-                        //   },
-                        //   onSaved: (value) {
-                        //     context.read<JWTModels>().requestMsg = value;
-                        //   },
-                        // ),
+                        const SizedBox(height: 5),
+                        ////////// SAVE BUTTON //////////
+                        MaterialButton(
+                          color: Colors.teal,
+                          onPressed: () {
+                            // เก็บข้อมูลลงใน Model
+                            if (_formKey.currentState!.validate()) {
+                              _formKey.currentState!.save();
+                            }
+                            setState(() {
+                              print("Save data & Set State!!!!!");
+                              print(
+                                  '{\n"merchantID": "${Provider.of<JWTModels>(context, listen: false).mid}",\n"invoiceNo": "${Provider.of<JWTModels>(context, listen: false).invNo}",\n"description": "${Provider.of<JWTModels>(context, listen: false).description}",\n"amount": ${Provider.of<JWTModels>(context, listen: false).amount},\n"currencyCode": "$currencyCode",\n"frontendReturnUrl": "$frontendReturnUrl",\n"backendReturnUrl": "$backendReturnUrl"\n}');
+                            });
+                          },
+                          child: const Text('Submit'),
+                        ),
+                        ////////// SAVE BUTTON //////////
 
                         const Text(
                           "Site",
@@ -652,21 +621,19 @@ class _FormTokenDemo01State extends State<FormTokenDemo01> {
                                 fontSize: 16, color: Colors.teal)),
                         const SizedBox(height: 20),
 
+                        ////////// CHECK OUT BUTTON //////////
                         SizedBox(
                           width: double.infinity,
                           height: 35,
                           child: ElevatedButton(
-                              onPressed: () async {
-                                if (_formKey.currentState!.validate()) {
-                                  _formKey.currentState!.save();
-
-                                  await encodePayloadJWT();
-                                }
+                              onPressed: () {
+                                encodePayloadJWT();
                               },
                               child: const Text(
                                 "Redirect Payment Page",
                               )),
                         ),
+                        ////////// CHECK OUT BUTTON //////////
 
                         const SizedBox(height: 10),
 

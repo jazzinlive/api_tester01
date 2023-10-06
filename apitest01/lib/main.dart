@@ -1,14 +1,17 @@
 import 'package:apitest01/models/jwt_models.dart';
+import 'package:apitest01/screens/exForm01.dart';
 import 'package:flutter/material.dart';
 //import 'package:pgw_sdk/models/api_environment.dart';
 //import 'package:pgw_sdk/pgw_sdk.dart';
 import 'models/paywise_models.dart';
 import 'models/qr_models.dart';
-import 'screens/home.dart';
 import 'package:provider/provider.dart';
+
+import 'screens/home.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
+  Provider.debugCheckInvalidValueType = null;
   //PGWSDK.initialize(APIEnvironment.Sandbox);
   runApp(const MyApp());
 }
@@ -25,7 +28,9 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (context) => QRModels()),
         Provider(create: (context) => QRAPIlog()),
         ChangeNotifierProvider(create: (context) => PaywiseModels()),
-        Provider(create: (context) => Paywiselog())
+        Provider(create: (context) => Paywiselog()),
+        ChangeNotifierProvider(create: (context) => FormData()),
+        Provider(create: (context) => FormData())
       ],
       child: MaterialApp(
         title: 'Flutter Demo',
@@ -34,6 +39,7 @@ class MyApp extends StatelessWidget {
           fontFamily: 'SukhumvitSet',
         ),
         home: const MyHomePage(title: 'Test API ver.1.1.0'),
+        //home: const FormPage(),
         debugShowCheckedModeBanner: false,
       ),
     );
