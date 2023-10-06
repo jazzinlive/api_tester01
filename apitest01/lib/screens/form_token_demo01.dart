@@ -67,7 +67,7 @@ class _FormTokenDemo01State extends State<FormTokenDemo01> {
     print(
         "################# step 1 : convert string requestMsg to json object #################");
 
-    Map<String, dynamic> newObj = jsonDecode(requestMsg!);
+    Map<String, dynamic> newObj = jsonDecode(requestMsg);
 
     print("newObj: $newObj");
     print("newObj mid: ${newObj['merchantID']}");
